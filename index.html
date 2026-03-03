@@ -646,7 +646,7 @@
             'RELEASE': 1000,
             'SIMGAGOGO69': 10000,
             'I_LOVE_ANAL': 999999,
-            'SCAt_FETISH': 670000
+            'SCAT_FETISH': 670000
         };
 
         let autoRollInterval = null;
@@ -985,7 +985,7 @@
             const cost = getUpgradeCost();
             if (state.points >= cost) {
                 state.points -= cost;
-                state.luck *= 1 + lucklevel / 2; // Each upgrade adds 0.5x multiplier
+                state.luck *= 1 + luckLevel / 2; // Each upgrade adds 0.5x multiplier
                 state.luckLevel += 1;
                 saveData();
                 updateUI();
