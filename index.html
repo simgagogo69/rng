@@ -669,7 +669,7 @@
         // --- Core Mechanics ---
         function calculateRNG() {
             // Pity increases chances. Max pity = huge boost.
-            const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.02));
+            const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.05));
             const currentLuck = state.luck * pityMulti;
 
             let roll = Math.random();
