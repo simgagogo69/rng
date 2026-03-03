@@ -985,7 +985,7 @@
             const cost = getUpgradeCost();
             if (state.points >= cost) {
                 state.points -= cost;
-                state.luck *= 1 + state.luckLevel / 2; // Each upgrade adds 0.5x multiplier
+                state.luck *= 1 + state.luckLevel / 4; // Each upgrade adds 0.5x multiplier
                 state.luckLevel += 1;
                 saveData();
                 updateUI();
