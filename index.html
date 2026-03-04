@@ -930,23 +930,23 @@ function buyPotion(type) {
 
     if (type === 1) {
         cost = 1e6;
-        multiplier = 1.10;
+        multiplier = 5.00;
         duration = 60000;
         name = "Minor Luck Potion";
     }
 
     if (type === 2) {
         cost = 1e9;
-        multiplier = 1.50;
+        multiplier = 50.00;
         duration = 120000;
-        name = "Major Luck Potion";
+        name = "Luck Potion";
     }
 
     if (type === 3) {
         cost = 1e15;
-        multiplier = 2.00;
+        multiplier = 1000.00;
         duration = 30000;
-        name = "GOD Potion";
+        name = "Major Luck Potion";
     }
 
     if (state.points < cost) {
