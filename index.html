@@ -46,11 +46,19 @@
 
         @keyframes heavyShake {
             0%, 100% { transform: translate(0, 0) scale(1); }
-            10% { transform: translate(-15px, 15px) scale(1.02); }
-            20% { transform: translate(15px, -15px) scale(0.98); }
-            30% { transform: translate(-15px, -15px) scale(1.05); }
-            40% { transform: translate(15px, 15px) scale(0.95); }
-            50% { transform: translate(-10px, 10px) scale(1.01); }
+            10% { transform: translate(-7px, 7px) scale(1.02); }
+            20% { transform: translate(7px, -7px) scale(0.98); }
+            30% { transform: translate(-7px, -7px) scale(1.05); }
+            40% { transform: translate(7px, 7x) scale(0.95); }
+            50% { transform: translate(-5px, 5px) scale(1.01); }
+        }
+
+        @keyframes godShake {
+            0% { transform: translate(0, 0) rotate(0); }
+            25% { transform: translate(-10px, 10px) rotate(-2deg); }
+            50% { transform: translate(10px, -10px) rotate(2deg); }
+            75% { transform: translate(-10px, -10px) rotate(0deg); }
+            100% { transform: translate(0, 0) rotate(0); }
         }
 
         @keyframes flash {
@@ -76,6 +84,11 @@
             100% { background-position: 0% 50%; }
         }
 
+        @keyframes rainbowShift {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
         .shake-active { animation: shake 0.4s ease-in-out; }
         .heavy-shake-active { animation: heavyShake 0.6s cubic-bezier(.36,.07,.19,.97) both; }
         .flash-active { animation: flash 0.5s ease-out; }
@@ -99,25 +112,12 @@
             z-index: 10;
         }
 
-        .stats-top {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .stat-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
+        .stats-top { display: flex; gap: 2rem; }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
         .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         .stat-value { font-size: 1.2rem; font-weight: bold; }
 
-        main {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
+        main { display: flex; flex: 1; overflow: hidden; }
 
         /* --- Left: Roll Area --- */
         #roll-section {
@@ -140,346 +140,200 @@
         }
 
         #rolled-image {
-            width: 200px;
-            height: 200px;
+            width: 200px; height: 200px;
             object-fit: contain;
             filter: drop-shadow(0 0 20px rgba(255,255,255,0.1));
             transition: all 0.3s;
         }
 
         #rolled-name {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-top: 1rem;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 3rem; font-weight: 900; margin-top: 1rem;
+            text-align: center; text-transform: uppercase; letter-spacing: 2px;
         }
 
-        #rolled-odds {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            margin-top: 0.5rem;
-        }
+        #rolled-odds { font-size: 1.2rem; color: var(--text-muted); margin-top: 0.5rem; }
 
-        .controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            width: 100%;
-            max-width: 400px;
-        }
+        .controls { display: flex; flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 400px; }
 
         button.btn-roll {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 1.2rem 3rem;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
+            background: var(--accent); color: white; border: none;
+            padding: 1.2rem 3rem; font-size: 1.5rem; font-weight: bold;
+            border-radius: 50px; cursor: pointer;
             box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            width: 100%;
+            transition: all 0.2s; text-transform: uppercase; letter-spacing: 2px; width: 100%;
         }
 
-        button.btn-roll:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(99, 102, 241, 0.5);
-        }
+        button.btn-roll:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 15px 25px rgba(99, 102, 241, 0.5); }
+        button.btn-roll:active:not(:disabled) { transform: translateY(2px); }
+        button.btn-roll:disabled { background: #333; color: #888; cursor: not-allowed; box-shadow: none; transform: none; }
 
-        button.btn-roll:active {
-            transform: translateY(2px);
-        }
-
-        .toggles {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
-        .toggle-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            font-size: 1rem;
-            color: var(--text-muted);
-            transition: color 0.2s;
-        }
+        .toggles { display: flex; gap: 1.5rem; align-items: center; }
+        .toggle-label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 1rem; color: var(--text-muted); transition: color 0.2s; }
         .toggle-label:hover { color: white; }
+        .toggle-label input:disabled { cursor: not-allowed; }
 
         .btn-upgrade {
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
+            background: var(--panel-bg); border: 1px solid var(--border-color);
+            color: white; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer;
+            transition: all 0.2s; font-family: inherit;
         }
-
-        .btn-upgrade:hover {
-            background: rgba(255,255,255,0.1);
-        }
+        .btn-upgrade:hover { background: rgba(255,255,255,0.1); }
 
         /* --- Right: Inventory Area --- */
-        #inventory-section {
-            width: 450px;
-            background: rgba(0,0,0,0.4);
-            border-left: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .inv-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 10px;
-            background: var(--panel-bg);
-            border-radius: 5px;
-            margin-top: 0.5rem;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--accent);
-            width: 0%;
-            transition: width 0.5s ease-out;
-        }
-
-        .inv-grid {
-            flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 1rem;
-            align-content: start;
-        }
-
-        /* Scrollbar styles */
+        #inventory-section { width: 450px; background: rgba(0,0,0,0.4); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .inv-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); }
+        .progress-bar-bg { width: 100%; height: 10px; background: var(--panel-bg); border-radius: 5px; margin-top: 0.5rem; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s ease-out; }
+        .inv-grid { flex: 1; padding: 1.5rem; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 1rem; align-content: start; }
         .inv-grid::-webkit-scrollbar { width: 8px; }
         .inv-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         .inv-grid::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
 
         .inv-item {
-            aspect-ratio: 1;
-            background: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s;
+            aspect-ratio: 1; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; cursor: pointer; transition: transform 0.2s;
         }
-
         .inv-item:hover { transform: scale(1.05); z-index: 2; }
-
-        .inv-item img {
-            width: 50%;
-            height: 50%;
-            object-fit: contain;
-        }
-
-        .inv-item.locked {
-            filter: grayscale(100%) opacity(0.3);
-        }
-
+        .inv-item img { width: 50%; height: 50%; object-fit: contain; }
+        .inv-item.locked { filter: grayscale(100%) opacity(0.3); }
         .inv-item.locked img { display: none; }
+        .inv-item.locked::after { content: '???'; font-size: 1.5rem; font-weight: bold; }
+        .item-count { position: absolute; bottom: -5px; right: -5px; background: var(--accent); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
 
-        .inv-item.locked::after {
-            content: '???';
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .item-count {
-            position: absolute;
-            bottom: -5px;
-            right: -5px;
-            background: var(--accent);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        /* --- Announcements --- */
         #global-announcement {
-            position: absolute;
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            border: 2px solid;
-            padding: 1rem 3rem;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            z-index: 1000;
-            transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(10px);
-            text-align: center;
-            white-space: nowrap;
+            position: absolute; top: -100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8);
+            border: 2px solid; padding: 1rem 3rem; border-radius: 50px; font-size: 1.2rem; font-weight: bold;
+            z-index: 1000; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px); text-align: center; white-space: nowrap;
         }
-
         #global-announcement.show { top: 20px; }
 
-        /* --- Responsive --- */
         @media (max-width: 900px) {
             main { flex-direction: column; }
             #inventory-section { width: 100%; border-left: none; border-top: 1px solid var(--border-color); flex: 1; }
             #roll-section { padding: 1rem; flex: none; height: 50vh; }
             #roll-display { min-height: 250px; margin-bottom: 1rem; }
             #rolled-image { width: 120px; height: 120px; }
-            #rolled-name { font-size: 2rem; }
+            #rolled-name { font-size: 1.8rem; }
         }
 
         /* --- Dynamic Effect Classes --- */
-        /* Effect 1: Normal */
         .efx-1 { text-shadow: none; }
-        /* Effect 2: Mild Glow */
         .efx-2 { text-shadow: 0 0 10px currentColor; }
-        /* Effect 3: Strong Glow & Float */
         .efx-3 { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; animation: float 3s ease-in-out infinite; }
-        /* Effect 4: Massive Glow, Shimmer */
-        .efx-4 { 
-            text-shadow: 0 0 10px #fff, 0 0 30px currentColor, 0 0 50px currentColor; 
-            animation: float 2s ease-in-out infinite; 
-        }
-        /* Effect 5: Glitch/God Tier */
+        .efx-4 { text-shadow: 0 0 10px #fff, 0 0 30px currentColor, 0 0 50px currentColor; animation: float 2s ease-in-out infinite; }
         .efx-5 {
-            background-image: linear-gradient(90deg, #fff, currentColor, #fff, currentColor);
-            background-size: 300% 100%;
-            -webkit-background-clip: text;
-            color: transparent;
-            animation: gradientShift 2s linear infinite, float 1.5s ease-in-out infinite;
+            background-image: linear-gradient(90deg, #fff, currentColor, #fff, currentColor); background-size: 300% 100%;
+            -webkit-background-clip: text; color: transparent; animation: gradientShift 2s linear infinite, float 1.5s ease-in-out infinite;
             text-shadow: 0 0 50px currentColor;
         }
+        .efx-6 {
+            background-image: linear-gradient(90deg, #fff, currentColor, #fff, currentColor); background-size: 300% 100%;
+            -webkit-background-clip: text; color: transparent;
+            animation: gradientShift 2s linear infinite, float 1.5s ease-in-out infinite, rainbowShift 4s linear infinite;
+            text-shadow: 0 0 80px currentColor;
+        }
+        .efx-7 {
+            color: #fff; text-shadow: 0 0 15px currentColor, 0 0 40px currentColor, 0 0 80px #fff, 0 0 120px currentColor;
+            letter-spacing: 5px; animation: float 1s ease-in-out infinite, godShake 0.2s infinite, rainbowShift 2s linear infinite;
+        }
 
-        /* Tooltip */
         .tooltip {
-            position: absolute;
-            background: rgba(0,0,0,0.9);
-            border: 1px solid var(--border-color);
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-            z-index: 500;
-            font-size: 0.9rem;
-            white-space: nowrap;
+            position: absolute; background: rgba(0,0,0,0.9); border: 1px solid var(--border-color); padding: 0.5rem 1rem;
+            border-radius: 5px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 500; font-size: 0.9rem; white-space: nowrap;
         }
 
-        /* --- Modal (Inspect) --- */
+        /* Modal Styles */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-content {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            padding: 3rem;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            transform: scale(0.8);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            min-width: 350px;
+            background: var(--bg-color); border: 1px solid var(--border-color); padding: 3rem; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; position: relative;
+            transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-width: 350px;
         }
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-        .modal-close {
-            position: absolute;
-            top: 15px; right: 20px;
-            background: none; border: none;
-            color: white; font-size: 2rem;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-close { position: absolute; top: 15px; right: 20px; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; transition: color 0.2s; }
         .modal-close:hover { color: var(--accent); }
-        #inspect-image {
-            width: 250px; height: 250px;
-            object-fit: contain;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 0 30px rgba(255,255,255,0.1));
-        }
-        #inspect-name { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; }
+        #inspect-image { width: 250px; height: 250px; object-fit: contain; margin-bottom: 1.5rem; filter: drop-shadow(0 0 30px rgba(255,255,255,0.1)); }
+        #inspect-name { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; text-align: center; }
         .inspect-detail { color: var(--text-muted); font-size: 1.1rem; margin-top: 0.5rem; }
 
-        /* --- Settings Menu Styles --- */
-        .settings-section {
-            width: 100%;
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .settings-section label {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        /* Settings Styles */
+        .settings-section { width: 100%; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .settings-section label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
         .settings-section input {
-            flex: 1;
-            background: rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 0.8rem;
-            border-radius: 8px;
-            font-family: inherit;
-            outline: none;
-            transition: border-color 0.2s;
+            flex: 1; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white;
+            padding: 0.8rem; border-radius: 8px; font-family: inherit; outline: none; transition: border-color 0.2s;
         }
-        .settings-section input:focus {
-            border-color: var(--accent);
+        .settings-section input:focus { border-color: var(--accent); }
+        .btn-settings-icon { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s, transform 0.2s; }
+        .btn-settings-icon:hover { color: white; transform: rotate(45deg); }
+
+        /* --- Cinematic Cutscene Engine Styles --- */
+        #cutscene-layer {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.5s ease;
+            pointer-events: all; /* Block clicks completely */
+            overflow: hidden;
         }
-        .btn-settings-icon {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.2s, transform 0.2s;
+
+        .cs-star {
+            position: absolute;
+            width: 15px; height: 15px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 50%; left: -10%;
+            transform: translate(-50%, -50%);
         }
-        .btn-settings-icon:hover {
-            color: white;
-            transform: rotate(45deg);
+
+        .cs-flash {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #fff; opacity: 0; pointer-events: none; z-index: 10;
         }
+
+        @keyframes csFlashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+        .cs-frame {
+            position: absolute;
+            width: 350px; height: 350px;
+            border: 4px solid #fff; border-radius: 20px;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.6);
+            opacity: 0; transform: scale(0.5);
+            animation: csFramePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, float 3s ease-in-out infinite alternate;
+            z-index: 20;
+        }
+        .cs-frame img { max-width: 80%; max-height: 80%; object-fit: contain; }
+
+        @keyframes csFramePop { to { opacity: 1; transform: scale(1); } }
+
+        .cs-title {
+            position: absolute;
+            bottom: 12%; width: 100%; text-align: center;
+            font-size: 4rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 8px;
+            opacity: 0; transform: translateY(30px);
+            z-index: 20; white-space: nowrap;
+        }
+        @keyframes csTitleUp { to { opacity: 1; transform: translateY(0); } }
+
+        .cs-ray {
+            position: absolute; top: 50%; left: 50%;
+            width: 200vw; height: 20px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, currentColor 50%, rgba(255,255,255,0) 100%);
+            transform-origin: center; opacity: 0.15;
+            z-index: 5;
+        }
+        #btn-shop:hover {
+    background: rgba(255,255,255,0.1);
+    transform: scale(1.1);
+}
     </style>
 </head>
 <body>
@@ -532,22 +386,21 @@
             <div class="inv-header">
                 <h3>Collection</h3>
                 <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
-                    <span>Progress: <span id="progress-text">0/30</span></span>
+                    <span>Progress: <span id="progress-text">0/60</span></span>
                     <span>Highest: <span id="highest-text">None</span></span>
                 </div>
                 <div class="progress-bar-bg">
                     <div class="progress-bar-fill" id="progress-bar"></div>
                 </div>
             </div>
-            <div class="inv-grid" id="inventory-grid">
-                <!-- Items populated by JS -->
-            </div>
+            <div class="inv-grid" id="inventory-grid"></div>
         </div>
     </main>
 
     <div id="global-announcement"></div>
     <div id="tooltip" class="tooltip"></div>
 
+    <!-- Inspect Modal -->
     <div id="inspect-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" id="btn-close-modal">&times;</button>
@@ -594,193 +447,474 @@
             </div>
         </div>
     </div>
+<!-- Shop Modal -->
+    <div id="shop-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 420px; align-items: flex-start;">
+            <button class="modal-close" id="btn-close-shop">&times;</button>
+            <h2 style="margin-bottom: 1.5rem; width: 100%; text-align: center;">🛒 Potion Shop</h2>
+
+            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+
+                <div class="btn-upgrade" id="buy-minor">
+                    🧪 Minor Luck Potion<br>
+                    <span class="desc">+10% Luck for 60s (Cost: 1M)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-major">
+                    🧪 Major Luck Potion<br>
+                    <span class="desc">+50% Luck for 120s (Cost: 1B)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-god">
+                    🧪 GOD Potion<br>
+                    <span class="desc">+100% Luck for 30s (Cost: 1Qa)</span>
+                </div>
+
+            </div>
+
+            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                Active Potion: <span id="active-potion">None</span>
+            </div>
+            <div id="potion-timer-container" style="
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    margin-top: 8px;
+    overflow: hidden;
+">
+    <div id="potion-timer-bar" style="
+        height: 100%;
+        width: 0%;
+        background: lime;
+        transition: width 0.1s linear;
+    "></div>
+</div>
+        </div>
+    </div>
+    <!-- Game Popup Modal -->
+<div id="game-popup" class="modal-overlay">
+    <div class="modal-content" style="width: 400px; text-align: center;">
+        <h3 id="popup-message" style="margin-bottom: 1.5rem;"></h3>
+        <div style="display: flex; gap: 1rem; width: 100%;">
+            <button id="popup-confirm" class="btn-upgrade" style="flex: 1;"></button>
+            <button id="popup-cancel" class="btn-upgrade" style="flex: 1;"></button>
+        </div>
+    </div>
+</div>
+    <button id="btn-shop" style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 2rem;
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 1500;
+    transition: transform 0.2s, background 0.2s;
+">
+    🛒
+</button>
 
     <script>
-        // --- Core Data: 30 Rarities with exponential odds ---
+        // --- Core Data: 60 Rarities (Scaling to Nonillions) ---
         const rarities = [
-            { id: 1, name: "Common", odds: 2, color: "#A0A0A0", effect: 1, val: 1 },
-            { id: 2, name: "Uncommon", odds: 4, color: "#4CAF50", effect: 1, val: 2 },
-            { id: 3, name: "Ordinary", odds: 6, color: "#8BC34A", effect: 1, val: 3 },
-            { id: 4, name: "Standard", odds: 8, color: "#009688", effect: 1, val: 4 },
-            { id: 5, name: "Refined", odds: 10, color: "#00BCD4", effect: 1, val: 5 },
-            { id: 6, name: "Rare", odds: 15, color: "#2196F3", effect: 2, val: 10 },
-            { id: 7, name: "Superior", odds: 25, color: "#3F51B5", effect: 2, val: 15 },
-            { id: 8, name: "Elite", odds: 35, color: "#9C27B0", effect: 2, val: 20 },
-            { id: 9, name: "Epic", odds: 50, color: "#673AB7", effect: 2, val: 35 },
-            { id: 10, name: "Masterwork", odds: 100, color: "#E91E63", effect: 2, val: 75 },
-            { id: 11, name: "Legendary", odds: 250, color: "#FF9800", effect: 3, val: 200 },
-            { id: 12, name: "Mythic", odds: 1000, color: "#FF5722", effect: 3, val: 800 },
-            { id: 13, name: "Ancient", odds: 2500, color: "#F44336", effect: 3, val: 2000 },
-            { id: 14, name: "Arcane", odds: 5000, color: "#DC143C", effect: 3, val: 4000 },
-            { id: 15, name: "Exalted", odds: 7500, color: "#FFD700", effect: 3, val: 6000 },
-            { id: 16, name: "Transcendent", odds: 10000, color: "#FFFFE0", effect: 3, val: 8000 },
-            { id: 17, name: "Divine", odds: 25000, color: "#FFFFFF", effect: 4, val: 20000 },
-            { id: 18, name: "Celestial", odds: 100000, color: "#87CEEB", effect: 4, val: 80000 },
-            { id: 19, name: "Ethereal", odds: 250000, color: "#E6E6FA", effect: 4, val: 200000 },
-            { id: 20, name: "Ascended", odds: 500000, color: "#98FF98", effect: 4, val: 400000 },
-            { id: 21, name: "Godlike", odds: 1000000, color: "#FF00FF", effect: 4, val: 800000 },
-            { id: 22, name: "Primordial", odds: 2500000, color: "#39FF14", effect: 4, val: 2000000 },
-            { id: 23, name: "Omniscient", odds: 5000000, color: "#7DF9FF", effect: 4, val: 4000000 },
-            { id: 24, name: "Eternal", odds: 10000000, color: "#FFDAB9", effect: 4, val: 8000000 },
-            { id: 25, name: "Infinity", odds: 25000000, color: "#C0C0C0", effect: 4, val: 20000000 },
-            { id: 26, name: "Voidborn", odds: 50000000, color: "#9D00FF", effect: 5, val: 40000000 },
-            { id: 27, name: "Cosmic Sovereign", odds: 100000000, color: "#4169E1", effect: 5, val: 80000000 },
-            { id: 28, name: "Reality Shaper", odds: 250000000, color: "#E0115F", effect: 5, val: 200000000 },
-            { id: 29, name: "Timeless Paragon", odds: 500000000, color: "#B9F2FF", effect: 5, val: 400000000 },
-            { id: 30, name: "Absolute", odds: 1000000000, color: "#FF0000", effect: 5, val: 1000000000 }
+            { id: 1, name: "Common", img: "common", odds: 2, color: "#A0A0A0", effect: 1, val: 1 },
+            { id: 2, name: "Uncommon", img: "uncommon", odds: 3, color: "#4CAF50", effect: 1, val: 2 },
+            { id: 3, name: "Ordinary", img: "ordinary", odds: 4, color: "#8BC34A", effect: 1, val: 3 },
+            { id: 4, name: "Standard", img: "standard", odds: 6, color: "#009688", effect: 1, val: 4 },
+            { id: 5, name: "Refined", img: "refined", odds: 10, color: "#00BCD4", effect: 1, val: 5 },
+            { id: 6, name: "Rare", img: "rare", odds: 15, color: "#2196F3", effect: 2, val: 10 },
+            { id: 7, name: "Superior", img: "superior", odds: 20, color: "#3F51B5", effect: 2, val: 15 },
+            { id: 8, name: "Elite", img: "elite", odds: 30, color: "#9C27B0", effect: 2, val: 20 },
+            { id: 9, name: "Epic", img: "epic", odds: 50, color: "#673AB7", effect: 2, val: 35 },
+            { id: 10, name: "Masterwork", img: "masterwork", odds: 100, color: "#E91E63", effect: 2, val: 75 },
+            { id: 11, name: "Legendary", img: "legendary", odds: 250, color: "#FF9800", effect: 3, val: 200 },
+            { id: 12, name: "Mythic", img: "mythic", odds: 1e3, color: "#FF5722", effect: 3, val: 800 },
+            { id: 13, name: "Ancient", img: "ancient", odds: 3e3, color: "#F44336", effect: 3, val: 2000 },
+            { id: 14, name: "Arcane", img: "arcane", odds: 5e3, color: "#8d23c2", effect: 3, val: 4000 },
+            { id: 15, name: "Exalted", img: "exalted", odds: 8e3, color: "#FFD700", effect: 3, val: 6000 },
+            { id: 16, name: "Transcendent", img: "transcendent", odds: 1e4, color: "#FFFFE0", effect: 3, val: 8000 },
+            { id: 17, name: "Divine", img: "divine", odds: 2e4, color: "#fff3ad", effect: 4, val: 20000 },
+            { id: 18, name: "Celestial", img: "celestial", odds: 3e4, color: "#f5ff69", effect: 4, val: 80000 },
+            { id: 19, name: "Ethereal", img: "ethereal", odds: 4e4, color: "#E6E6FA", effect: 4, val: 200000 },
+            { id: 20, name: "Ascended", img: "ascended", odds: 7e4, color: "#f2ff91", effect: 4, val: 300000 },
+            { id: 21, name: "Godlike", img: "godlike", odds: 1e5, color: "#FF00FF", effect: 4, val: 400000 },
+            { id: 22, name: "Primordial", img: "primordial", odds: 2e5, color: "#39FF14", effect: 4, val: 1000000 },
+            { id: 23, name: "Omniscient", img: "omniscient", odds: 3e5, color: "#7DF9FF", effect: 4, val: 2000000 },
+            { id: 24, name: "Eternal", img: "eternal", odds: 4e5, color: "#FFDAB9", effect: 4, val: 4000000 },
+            { id: 25, name: "Infinity", img: "infinity", odds: 7e5, color: "#C0C0C0", effect: 4, val: 10000000 },
+            { id: 26, name: "Voidborn", img: "voidborn", odds: 1e6, color: "#9D00FF", effect: 5, val: 20000000 },
+            { id: 27, name: "Cosmic Sovereign", img: "cosmic_sovereign", odds: 2e6, color: "#f5ff69", effect: 5, val: 40000000 },
+            { id: 28, name: "Reality Shaper", img: "reality_shaper", odds: 3e6, color: "#E0115F", effect: 5, val: 100000000 },
+            { id: 29, name: "Timeless Paragon", img: "timeless_paragon", odds: 5e6, color: "#B9F2FF", effect: 5, val: 200000000 },
+            { id: 30, name: "Absolute", img: "absolute", odds: 7e6, color: "#FF0000", effect: 5, val: 400000000 },
+            { id: 31, name: "✦ 𝑂𝑀𝐸𝐺𝐴 ✦", img: "omega", odds: 1e7, color: "#ff0080", effect: 6, val: 1e9 },
+            { id: 32, name: "⟡ 𝐀𝐏𝐄𝐗 𝐒𝐈𝐍𝐆𝐔𝐋𝐀𝐑𝐈𝐓𝐘 ⟡", img: "apex_singularity", odds: 2.5e7, color: "#5797cf", effect: 6, val: 5e9 },
+            { id: 33, name: "𓆩 𝐒𝐎𝐕𝐄𝐑𝐄𝐈𝐆𝐍 𝐏𝐑𝐈𝐌𝐄 𓆪", img: "sovereign_prime", odds: 5e7, color: "#ffff00", effect: 6, val: 2e10 },
+            { id: 34, name: "✧ 𝐇𝐘𝐏𝐄𝐑𝐈𝐎𝐍 ✧", img: "hyperion", odds: 7e7, color: "#ff8c00", effect: 6, val: 8e10 },
+            { id: 35, name: "◈ 𝐙𝐄𝐍𝐈𝐓𝐇 ◈", img: "zenith", odds: 9e7, color: "#00ff00", effect: 6, val: 3e11 },
+            { id: 36, name: "✶ 𝐖𝐎𝐑𝐋𝐃𝐒𝐇𝐀𝐏𝐄𝐑 ✶", img: "worldshaper", odds: 1e8, color: "#ff00ff", effect: 6, val: 1e12 },
+            { id: 37, name: "☾ 𝐎𝐕𝐄𝐑𝐕𝐎𝐈𝐃 ☽", img: "overvoid", odds: 2.5e8, color: "#8a2be2", effect: 6, val: 5e12 },
+            { id: 38, name: "✹ 𝐀𝐏𝐄𝐗 𝐄𝐓𝐄𝐑𝐍𝐀𝐋 ✹", img: "apex_eternal", odds: 5e8, color: "#296191", effect: 6, val: 2e13 },
+            { id: 39, name: "❖ 𝐅𝐈𝐍𝐀𝐋𝐈𝐓𝐘 ❖", img: "finality", odds: 7e8, color: "#dc143c", effect: 6, val: 8e13 },
+            { id: 40, name: "⟢ 𝐒𝐔𝐏𝐑𝐄𝐌𝐄 𝐀𝐁𝐒𝐎𝐋𝐔𝐓𝐄 ⟣", img: "supreme_absolute", odds: 9e8, color: "#ffd700", effect: 6, val: 3e14 },
+            { id: 41, name: "✦ 𝐇𝐄𝐀𝐕𝐄𝐍’𝐒 𝐖𝐑𝐀𝐓𝐇 ✦", img: "heavens_wrath", odds: 1e9, color: "#ffffff", effect: 6, val: 1e15 },
+            { id: 42, name: "⟡ 𝐀𝐒𝐓𝐑𝐀𝐋 𝐃𝐎𝐌𝐈𝐍𝐈𝐎𝐍 ⟡", img: "astral_dominion", odds: 2.5e9, color: "#5c2df7", effect: 6, val: 5e15 },
+            { id: 43, name: "𖤐 𝐎𝐁𝐋𝐈𝐕𝐈𝐎𝐍 𝐂𝐑𝐎𝐖𝐍 𖤐", img: "oblivion_crown", odds: 5e9, color: "#4b0082", effect: 6, val: 2e16 },
+            { id: 44, name: "✧ 𝐂𝐄𝐋𝐄𝐒𝐓𝐈𝐀𝐋 𝐀𝐏𝐄𝐗 ✧", img: "celestial_apex", odds: 7e9, color: "#f5ff69", effect: 6, val: 8e16 },
+            { id: 45, name: "⟢ 𝐈𝐍𝐅𝐈𝐍𝐈𝐓𝐘 𝐄𝐍𝐆𝐈𝐍𝐄 ⟣", img: "infinity_engine", odds: 9e9, color: "#c0c0c0", effect: 6, val: 3e17 },
+            { id: 46, name: "✶ 𝐃𝐈𝐕𝐈𝐍𝐄 𝐂𝐀𝐓𝐀𝐂𝐋𝐘𝐒𝐌 ✶", img: "divine_cataclysm", odds: 1e10, color: "#c46451", effect: 6, val: 1e18 },
+            { id: 47, name: "☩ 𝐎𝐌𝐍𝐈𝐕𝐄𝐑𝐒𝐀𝐋 ☩", img: "omniversal", odds: 2.5e10, color: "#f5f5dc", effect: 6, val: 5e18 },
+            { id: 48, name: "❂ 𝐂𝐑𝐄𝐀𝐓𝐈𝐎𝐍’𝐒 𝐄𝐃𝐆𝐄 ❂", img: "creations_edge", odds: 5e10, color: "#e3e374", effect: 6, val: 2e19 },
+            { id: 49, name: "✦ 𝐆𝐎𝐃𝐇𝐀𝐍𝐃 ✦", img: "godhand", odds: 7e10, color: "#daa520", effect: 6, val: 8e19 },
+            { id: 50, name: "⟡ 𝐓𝐑𝐔𝐄 𝐎𝐑𝐈𝐆𝐈𝐍 ⟡", img: "true_origin", odds: 9e10, color: "#f0e68c", effect: 6, val: 2e20 },
+            { id: 51, name: "☠ 𝐔𝐍𝐅𝐀𝐓𝐇𝐎𝐌𝐀𝐁𝐋𝐄 ☠", img: "unfathomable", odds: 1e11, color: "#8B0000", effect: 7, val: 1e21 },
+            { id: 52, name: "✶ 𝐏𝐀𝐑𝐀𝐃𝐎𝐗𝐈𝐂𝐀𝐋 ✶", img: "paradoxical", odds: 2.5e11, color: "#a37903", effect: 7, val: 2e21 },
+            { id: 53, name: "⟢ 𝐁𝐄𝐘𝐎𝐍𝐃 𝐂𝐎𝐌𝐏𝐑𝐄𝐇𝐄𝐍𝐒𝐈𝐎𝐍 ⟣", img: "beyond_comprehension", odds: 5e11, color: "#9de1fc", effect: 7, val: 3e21 },
+            { id: 54, name: "𓆩 𝐓𝐑𝐀𝐍𝐒𝐂𝐄𝐍𝐃𝐄𝐍𝐓 𝐎𝐌𝐄𝐆𝐀 𓆪", img: "transcendent_omega", odds: 7e11, color: "#9b7cf7", effect: 7, val: 3.5e21 },
+            { id: 55, name: "✦ 𝐋𝐈𝐌𝐈𝐓𝐁𝐑𝐄𝐀𝐊𝐄𝐑 ✦", img: "limitbreaker", odds: 1e12, color: "#394ae3", effect: 7, val: 4e21 },
+            { id: 56, name: "◈ 𝐑𝐄𝐀𝐋𝐈𝐓𝐘 𝐂𝐎𝐋𝐋𝐀𝐏𝐒𝐄 ◈", img: "reality_collapse", odds: 2.5e12, color: "#d9d9d9", effect: 7, val: 4.3e21 },
+            { id: 57, name: "☾ 𝐄𝐓𝐄𝐑𝐍𝐀𝐋 𝐒𝐈𝐍𝐆𝐔𝐋𝐀𝐑𝐈𝐓𝐘 ☽", img: "eternal_singularity", odds: 5e12, color: "#dededc", effect: 7, val: 4.6e21 },
+            { id: 58, name: "✹ 𝐀𝐌𝐀𝐓𝐄𝐑𝐀𝐒𝐔 ✹", img: "amaterasu", odds: 7.5e12, color: "#f2a407", effect: 7, val: 4.8e21 },
+            { id: 59, name: "⟡ 𝐓𝐇𝐄 𝐅𝐈𝐑𝐒𝐓 ⟡", img: "the_first", odds: 1e13, color: "#020fa1", effect: 7, val: 1e22 },
+            { id: 60, name: "✦ 𝐓𝐇𝐄 𝐋𝐀𝐒𝐓 ✦", img: "the_last", odds: 1e14, color: "#9e0303", effect: 7, val: 2e22 }
         ];
-
+        // --- Potions---
+        let potionMultiplier = 1;
+        let potionEndTime = 0;
+        let potionInterval = null;
+        let potionTimeout = null;
+        let activePotionName = null;
         // --- Game State ---
-        let state = {
-            inventory: {}, 
-            rolls: 0,
-            points: 0,
-            luckLevel: 1,
-            luck: 1,
-            pity: 0,
-            playerName: null,
-            redeemedCodes: []
-        };
-
+        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [] };
         const validCodes = {
             'RELEASE': 1000,
             'SIMGAGOGO69': 10000,
-            'I_LOVE_ANAL': 999999,
-            'SCAT_FETISH': 670000
+            'WUPDATE': 2000,
+            'CHEATERMEATBEATER': 10000000000
         };
-
+        const SAVE_VERSION = 3;
         let autoRollInterval = null;
-        let isRolling = false;
+        let isPlayingCutscene = false;
 
-        // --- Utility Functions ---
-        const formatNumber = (num) => new Intl.NumberFormat().format(num);
+        // --- Game Popup System ---
+        const popup = document.getElementById("game-popup");
+        const popupMsg = document.getElementById("popup-message");
+        const popupConfirm = document.getElementById("popup-confirm");
+        const popupCancel = document.getElementById("popup-cancel");
+
+        function showPopup(message, confirmText, cancelText, onConfirm) {
+            popupMsg.textContent = message;
+            popupConfirm.textContent = confirmText;
+            popupCancel.textContent = cancelText;
+
+            popup.classList.add("active");
+
+            popupConfirm.onclick = () => {
+                popup.classList.remove("active");
+                onConfirm();
+            };
+
+            popupCancel.onclick = () => {
+                popup.classList.remove("active");
+            };
+        }
+        // --- Utility ---
+        function formatNumber(num) {
+            if (num < 1000) return Math.floor(num).toString();
+            const map = [
+                { value: 1e33, symbol: "Dc" }, { value: 1e30, symbol: "No" }, { value: 1e27, symbol: "Oc" },
+                { value: 1e24, symbol: "Sp" }, { value: 1e21, symbol: "Sx" }, { value: 1e18, symbol: "Qi" },
+                { value: 1e15, symbol: "Qa" }, { value: 1e12, symbol: "T" }, { value: 1e9,  symbol: "B" },
+                { value: 1e6,  symbol: "M" }, { value: 1e3,  symbol: "K" }
+            ];
+            for (let i = 0; i < map.length; i++) {
+                if (num >= map[i].value) {
+                    let formatted = (num / map[i].value).toFixed(1);
+                    if (formatted.endsWith('.0')) formatted = formatted.slice(0, -2);
+                    return formatted + map[i].symbol;
+                }
+            }
+            return Math.floor(num).toString();
+        }
         
-        const getUpgradeCost = () => Math.floor(100 * Math.pow(3, state.luckLevel - 1));
+        const getUpgradeCost = () => 100 * Math.pow(3, state.luckLevel - 3);
+        const getFilename = (rarity) => rarity.img || rarity.name.toLowerCase().replace(/ /g, '_');
 
-        const getFilename = (name) => name.toLowerCase().replace(/ /g, '_');
-
-        // SVG Placeholder generator for missing images
-        const getPlaceholderSVG = (color, initial) => {
+        const getPlaceholderSVG = (color, name) => {
+            const initial = name.replace(/[^a-zA-Z]/g, '')[0] || '?';
             const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
                 <rect width="100" height="100" fill="#1a1a24" rx="15" stroke="${color}" stroke-width="4"/>
-                <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="${color}" font-size="50" font-family="sans-serif" font-weight="bold">${initial}</text>
+                <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="${color}" font-size="50" font-family="sans-serif" font-weight="bold">${initial.toUpperCase()}</text>
             </svg>`;
             return `data:image/svg+xml;base64,${btoa(svg)}`;
         };
 
+        const sleep = ms => new Promise(res => setTimeout(res, ms));
+
         // --- Core Mechanics ---
         function calculateRNG() {
-            // Pity increases chances. Max pity = huge boost.
-            const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.05));
-            const currentLuck = state.luck * pityMulti;
-
+            const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.02));
+            const currentLuck = (state.luck * potionMultiplier) * pityMulti;
             let roll = Math.random();
-
-            // Check from Rarest to Common
             for (let i = rarities.length - 1; i >= 0; i--) {
-                const r = rarities[i];
-                const chance = (1 / r.odds) * currentLuck;
-                if (roll <= chance) {
-                    return r;
-                }
+                const chance = (1 / rarities[i].odds) * currentLuck;
+                if (roll <= chance) return rarities[i];
             }
             return rarities[0];
         }
 
-        function triggerRoll() {
-            if (isRolling) return;
-            
-            // UI setup for roll animation
+function triggerRoll() {
+    if (isPlayingCutscene) return;
+    
+    const result = calculateRNG();
+
+    // Check if item is NEW (first time getting it)
+    const isNewItem = !state.inventory[result.id] || state.inventory[result.id] === 0;
+
+    // Backend processing
+    state.rolls++;
+    const highestId = Math.max(0, ...Object.keys(state.inventory).map(Number));
+    const badRollThreshold = Math.max(highestId - 5, 7); 
+    if (result.id <= badRollThreshold) { state.pity++; } else { state.pity = 0; }
+    state.points += result.val;
+    state.inventory[result.id] = (state.inventory[result.id] || 0) + 1;
+    saveData();
+
+    // Handle Cutscene or Standard Display
+    if (isNewItem && result.id >= 31) {
+        playCutscene(result);
+    } else {
+        updateUI(result);
+        triggerEffects(result, isNewItem);  // **PASS isNewItem HERE**
+        animateStandardRoll();
+    }
+}
+
+        function animateStandardRoll() {
             const imgEl = document.getElementById('rolled-image');
             const nameEl = document.getElementById('rolled-name');
-            imgEl.style.animation = 'none';
-            nameEl.style.animation = 'none';
-            void imgEl.offsetWidth; // Trigger reflow
-            
-            state.rolls++;
-            const result = calculateRNG();
-
-            // Pity system logic: Dynamic based on best tier
-            // To ensure early game still has pity, we set a base threshold of Tier 7 (so Tier 8+ resets pity initially)
-            const highestId = Math.max(0, ...Object.keys(state.inventory).map(Number));
-            const badRollThreshold = Math.max(highestId - 5, 7); 
-
-            if (result.id <= badRollThreshold) {
-                state.pity++;
-            } else {
-                state.pity = 0;
-            }
-
-            // Update Economy/Inventory
-            state.points += result.val;
-            state.inventory[result.id] = (state.inventory[result.id] || 0) + 1;
-            
-            saveData();
-            updateUI(result);
-            triggerEffects(result);
-            
-            // Reset animations
+            imgEl.style.animation = 'none'; nameEl.style.animation = 'none';
+            void imgEl.offsetWidth; // trigger reflow
             imgEl.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
             nameEl.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both';
         }
 
-        // --- Visual Effects ---
-        function triggerEffects(rarity) {
-            const body = document.body;
-            body.className = ''; // reset classes
+        // --- Cinematic Cutscene Engine ---
+        async function playCutscene(rarity) {
+            isPlayingCutscene = true;
             
-            if (rarity.effect >= 3) {
-                body.classList.add('shake-active');
-            }
-            if (rarity.effect >= 4) {
-                setTimeout(() => body.classList.add('flash-active'), 50);
-                spawnParticles(rarity.color, 30);
-            }
-            if (rarity.effect >= 5) {
-                body.classList.remove('shake-active');
-                body.classList.add('heavy-shake-active');
-                spawnParticles(rarity.color, 100);
-                showAnnouncement(`YOU ROLLED ${rarity.name.toUpperCase()}!`, rarity.color);
+            // Pause auto-roll & disable UI
+            const autoBtn = document.getElementById('toggle-auto');
+            const wasAutoRolling = autoBtn.checked;
+            if (autoRollInterval) { clearInterval(autoRollInterval); autoRollInterval = null; }
+            document.getElementById('btn-roll').disabled = true;
+            autoBtn.disabled = true;
+
+            // Setup Overlay
+            const overlay = document.createElement('div');
+            overlay.id = 'cutscene-layer';
+            document.body.appendChild(overlay);
+
+            // Tier Evaluation for Escalation
+            const tId = rarity.id;
+            const t31 = tId >= 31
+            const t45 = tId >= 45;
+            const t50 = tId >= 50;
+            const t56 = tId >= 56;
+
+            // 1. Fade to Black
+            await sleep(50);
+            overlay.style.opacity = '1';
+            await sleep(600);
+
+            // 2. Star Sequence
+            const star = document.createElement('div');
+            star.className = 'cs-star';
+            star.style.boxShadow = `0 0 30px 10px ${rarity.color}`;
+            overlay.appendChild(star);
+
+            let buildupTime = t56 ? 3000 : 1800;
+            
+            star.animate([
+                { left: '-10%', transform: 'translate(-50%, -50%) scale(1)' },
+                { left: t50 ? '30%' : '50%', transform: 'translate(-50%, -50%) scale(1.5)' }
+            ], { duration: buildupTime, fill: 'forwards', easing: 'ease-in' });
+
+            await sleep(buildupTime);
+
+            if (t50) {
+                // Slow-mo phase for top tiers
+                star.animate([
+                    { left: '30%', transform: 'translate(-50%, -50%) scale(1.5)' },
+                    { left: '50%', transform: 'translate(-50%, -50%) scale(2.5)' }
+                ], { duration: 1500, fill: 'forwards', easing: 'linear' });
+
+                await sleep(1000);
+                
+                // Distortion Flash
+                if (t45) flashScreen(overlay);
+                await sleep(500);
+            } else if (t45) {
+                flashScreen(overlay);
             }
 
-            setTimeout(() => {
-                body.className = '';
-            }, 1000);
+            // 3. Impact & Explosion
+            star.remove();
+            
+            overlay.style.animation = t56 ? 'heavyShake 1s cubic-bezier(.36,.07,.19,.97)' : 'shake 0.5s ease-out';
+            
+            if (t45) {
+                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}44 0%, #000 80%)`;
+            }
+
+            createCSParticles(overlay, rarity.color, t50 ? 250 : 100);
+
+            if (t50) {
+                setTimeout(() => createCSParticles(overlay, '#ffffff', 150), 200);
+            }
+
+            if (t56) {
+                createCSRays(overlay, rarity.color);
+            }
+
+            // 4. Reveal Frame & Image
+            const frame = document.createElement('div');
+            frame.className = 'cs-frame';
+            frame.style.borderColor = rarity.color;
+            frame.style.boxShadow = `0 0 60px ${rarity.color}, inset 0 0 40px ${rarity.color}`;
+            
+            const img = document.createElement('img');
+            img.src = `images/${getFilename(rarity)}.png`;
+            img.onerror = () => { img.src = getPlaceholderSVG(rarity.color, rarity.name); };
+            frame.appendChild(img);
+            overlay.appendChild(frame);
+
+            // 5. Title Reveal
+            const title = document.createElement('div');
+            title.className = 'cs-title';
+            title.style.color = rarity.color;
+            title.style.textShadow = `0 0 20px ${rarity.color}, 0 0 50px ${rarity.color}`;
+            overlay.appendChild(title);
+
+            if (t56) {
+                // Dramatic Letter-by-Letter
+                title.style.opacity = '1';
+                title.style.transform = 'translateY(0)';
+                await sleep(800); // pause before text
+                const chars = [...rarity.name];
+                for (let i = 0; i < chars.length; i++) {
+                    title.textContent += chars[i];
+                    await sleep(80); // typewriter speed
+                }
+                title.style.animation = 'float 3s ease-in-out infinite alternate';
+            } else {
+                title.textContent = rarity.name;
+                title.style.animation = 'csTitleUp 0.6s ease-out forwards, float 3s ease-in-out infinite alternate';
+                title.style.animationDelay = '0s, 0.6s';
+            }
+
+            // Admire phase
+            await sleep(t56 ? 5000 : 3500);
+
+            // 6. Fade Out & Cleanup
+            overlay.style.opacity = '0';
+            await sleep(600);
+            overlay.remove();
+
+            // 7. Resume Standard Game State
+            updateUI(rarity); // Update main board so player sees the roll there too
+            
+            isPlayingCutscene = false;
+            document.getElementById('btn-roll').disabled = false;
+            autoBtn.disabled = false;
+            
+            if (wasAutoRolling && autoBtn.checked) {
+                autoRollInterval = setInterval(triggerRoll, 1000);
+            }
         }
 
-        function spawnParticles(color, count) {
+        // --- Cutscene Helpers ---
+        function flashScreen(parent) {
+            const f = document.createElement('div');
+            f.className = 'cs-flash';
+            f.style.animation = 'csFlashAnim 0.3s ease-out';
+            parent.appendChild(f);
+            setTimeout(() => f.remove(), 300);
+        }
+
+        function createCSParticles(parent, color, count) {
             for (let i = 0; i < count; i++) {
                 const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.backgroundColor = color;
-                
-                // Random size 5-15px
-                const size = Math.random() * 10 + 5;
-                p.style.width = `${size}px`;
-                p.style.height = `${size}px`;
+                p.style.position = 'absolute'; p.style.left = '50%'; p.style.top = '50%';
+                const size = Math.random() * 8 + 4;
+                p.style.width = `${size}px`; p.style.height = `${size}px`;
+                p.style.backgroundColor = color; p.style.borderRadius = '50%';
+                p.style.boxShadow = `0 0 15px ${color}`; p.style.zIndex = '10';
+                parent.appendChild(p);
 
-                // Start center
-                p.style.left = '50%';
-                p.style.top = '50%';
-                
-                document.body.appendChild(p);
-
-                // Random target position
                 const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 500 + 100;
-                const tx = Math.cos(angle) * distance;
-                const ty = Math.sin(angle) * distance;
-
+                const dist = Math.random() * (window.innerWidth * 0.6) + 100;
+                
                 p.animate([
                     { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-                    { transform: `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(0)`, opacity: 0 }
-                ], {
-                    duration: 800 + Math.random() * 600,
-                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-                }).onfinish = () => p.remove();
+                    { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(0)`, opacity: 0 }
+                ], { duration: 1000 + Math.random() * 1500, easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)' }).onfinish = () => p.remove();
             }
         }
 
+        function createCSRays(parent, color) {
+            const rays = 12;
+            for(let i=0; i<rays; i++) {
+                const r = document.createElement('div');
+                r.className = 'cs-ray'; r.style.color = color;
+                const angle = (360/rays) * i;
+                parent.appendChild(r);
+                r.animate([
+                    { transform: `translate(-50%, -50%) rotate(${angle}deg)` },
+                    { transform: `translate(-50%, -50%) rotate(${angle + 360}deg)` }
+                ], { duration: 25000, iterations: Infinity });
+            }
+        }
+
+        // --- Standard UI Visual Effects ---
+        function triggerEffects(rarity, isNewItem) {
+            // **ADD THIS: Only trigger effects if it's a NEW item**
+            if (!isNewItem) return;
+            
+            const body = document.body;
+            body.className = ''; 
+            if (rarity.effect === 3) body.classList.add('shake-active');
+            if (rarity.effect >= 4 && rarity.effect <= 5) {
+                setTimeout(() => body.classList.add('flash-active'), 50);
+                spawnStandardParticles(rarity.color, 30);
+            }
+            if (rarity.effect >= 5) {
+                body.classList.remove('shake-active'); body.classList.add('heavy-shake-active');
+                spawnStandardParticles(rarity.color, 100);
+                showAnnouncement(`YOU ROLLED ${rarity.name.toUpperCase()}!`, rarity.color);
+            }
+            setTimeout(() => { body.className = ''; }, 1000);
+        }
+
+        function spawnStandardParticles(color, count) {
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle'; p.style.backgroundColor = color;
+                const size = Math.random() * 10 + 5; p.style.width = `${size}px`; p.style.height = `${size}px`;
+                p.style.left = '50%'; p.style.top = '50%';
+                document.body.appendChild(p);
+                const angle = Math.random() * Math.PI * 2; const dist = Math.random() * 600 + 100;
+                p.animate([
+                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                    { transform: `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(0)`, opacity: 0 }
+                ], { duration: 800 + Math.random() * 800, easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)' }).onfinish = () => p.remove();
+            }
+        }
         function showAnnouncement(text, color) {
             const banner = document.getElementById('global-announcement');
             banner.textContent = text;
@@ -791,44 +925,185 @@
             banner.classList.add('show');
             setTimeout(() => banner.classList.remove('show'), 4000);
         }
+function buyPotion(type) {
+    let cost, multiplier, duration, name;
 
-              setInterval(() => {
-            if (Math.random() < 0.3) {
-                const fakeUsers = ["Guest_1902", "Guest_2321", "Guest_1850", "Guest_1284", "ShadowNinja", "ShadowNigga", "RNG_God", "NoobSlayer99", "LuckyDuck", "LuckyFuck", "bumcracker67", "naperiggerson", "EFN", "diddysbumhole", "wemby'slittletwink", "CP_WATCHER", "Ray_Piste", "Peter_File"];
-                const targetRarity = rarities[Math.floor(Math.random() * 10) + 20]; // Tiers 20-30
-                const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
-                showAnnouncement(`[Global] ${user} rolled ${targetRarity.name}!`, targetRarity.color);
-            }
-        }, Math.random() * 30000);
+    if (type === 1) {
+        cost = 1e6;
+        multiplier = 1.10;
+        duration = 60000;
+        name = "Minor Luck Potion";
+    }
 
+    if (type === 2) {
+        cost = 1e9;
+        multiplier = 1.50;
+        duration = 120000;
+        name = "Major Luck Potion";
+    }
+
+    if (type === 3) {
+        cost = 1e15;
+        multiplier = 2.00;
+        duration = 30000;
+        name = "GOD Potion";
+    }
+
+    if (state.points < cost) {
+        showPopup(
+            `You're broke. You need ${formatNumber(cost)} points.`,
+            "Ok",
+            "Close",
+            () => {}
+        );
+        return;
+    }
+
+    if (potionMultiplier !== 1) {
+        showPopup(
+            "Doing this will replace your current potion.",
+            "I know",
+            "Nevermind",
+            () => completePotionPurchase(cost, multiplier, duration, name)
+        );
+        return;
+    }
+
+    completePotionPurchase(cost, multiplier, duration, name);
+}
+function completePotionPurchase(cost, multiplier, duration, name) {
+    state.points -= cost;
+    activatePotion(multiplier, duration, name);
+    saveData();
+    updateUI();
+}
+function activatePotion(multiplier, duration, name) {
+
+    // Always clear old timers
+    if (potionTimeout) clearTimeout(potionTimeout);
+    if (potionInterval) clearInterval(potionInterval);
+
+    potionMultiplier = multiplier;
+    activePotionName = name;
+    potionEndTime = Date.now() + duration;
+
+    document.getElementById("active-potion").textContent =
+        `${name} (${multiplier}x)`;
+
+    const bar = document.getElementById("potion-timer-bar");
+    bar.style.width = "100%";
+
+    // Animate countdown
+    potionInterval = setInterval(() => {
+        const remaining = potionEndTime - Date.now();
+        const percent = Math.max(0, (remaining / duration) * 100);
+        bar.style.width = percent + "%";
+
+        if (remaining <= 0) {
+            clearInterval(potionInterval);
+        }
+    }, 50);
+
+    potionTimeout = setTimeout(() => {
+        potionMultiplier = 1;
+        activePotionName = null;
+        bar.style.width = "0%";
+        document.getElementById("active-potion").textContent = "None";
+        updateUI();
+    }, duration);
+
+    updateUI();
+}
+        // --- Global Announcements System ---
+let nextGlobalAnnounceTime = Date.now();
+let nextGlobalRarity = null;
+
+function pickRandomRarity() {
+    // Only allow tiers 25+
+    const eligibleRarities = rarities.filter(r => r.id >= 25);
+
+    if (eligibleRarities.length === 0) return null;
+
+    // Bias toward lower of the eligible tiers (so 25–30 appear more than 55–60)
+    const randomVal = Math.random();
+    const rarityIndex = Math.floor(Math.pow(randomVal, 2.2) * eligibleRarities.length);
+
+    return eligibleRarities[Math.min(eligibleRarities.length - 1, rarityIndex)];
+}
+
+function calculateWaitTime(rarity) {
+    const minWait = 4000;   // 4 sec minimum
+    const maxWait = 20000;  // 20 sec max
+    
+    const rarityFactor = rarity.id / rarities.length; // 0 → 1
+    
+    // Higher rarity = longer wait
+    const baseWait = minWait + (rarityFactor * (maxWait - minWait));
+    
+    const randomVariation = (Math.random() - 0.5) * 4000; // ±2 sec
+    
+    return Math.max(minWait, baseWait + randomVariation);
+}
+
+function scheduleNextGlobalAnnounce() {
+    // 5% chance of "skip event" - announce immediately with random rarity
+    if (Math.random() < 0.05) {
+        nextGlobalAnnounceTime = Date.now() + 1000; // 1 second from now
+        nextGlobalRarity = pickRandomRarity();
+        return;
+    }
+    
+    // Normal: pick a rarity and calculate wait time
+    nextGlobalRarity = pickRandomRarity();
+    const waitTime = calculateWaitTime(nextGlobalRarity);
+    nextGlobalAnnounceTime = Date.now() + waitTime;
+}
+
+function checkAndDisplayGlobalAnnounce() {
+    if (!nextGlobalRarity) {
+        scheduleNextGlobalAnnounce();
+        return;
+    }
+    
+    if (Date.now() >= nextGlobalAnnounceTime) {
+        // Time to announce!
+        const fakeUsers = [
+        "Guest_1902", "Guest_2321", "Guest_1850", "Guest_1284", "ShadowNinja", "ShadowNigga", "RNG_God", "NoobSlayer99", "LuckyDuck", "LuckyFuck", "bumcracker67", "naperiggerson", "EFN", "ERN", "diddysbumhole", "wemby'slittletwink", "CP_WATCHER", "Ray_Piste", "Peter_File", "MrCoolJr", "MrCoolSr", "Drake's_Fat_Dick", "gothmommycracker", "NiggaBeater", "WSpeed_Editz", "ILoveMinors", "StrongestIsrealiSoldier", "IDF_bootlicker", "Big_Yahu", "Jewish_City_Boy", "i_have_scat_fetish", "piss_drinking_4ever", "sweatyArmpitLicker"
+        ];
+        const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+        showAnnouncement(`[Global] ${user} rolled ${nextGlobalRarity.name}!`, nextGlobalRarity.color);
+        
+        // Schedule next announce
+        scheduleNextGlobalAnnounce();
+    }
+}
+
+// Check every 500ms for announcements
+setInterval(checkAndDisplayGlobalAnnounce, 500);
+
+// Initialize first announcement
+scheduleNextGlobalAnnounce();
         // --- UI Updates ---
         function updateUI(result) {
-            // Update Top Stats
+            const totalLuck = state.luck * potionMultiplier;
             document.getElementById('display-player-name').textContent = state.playerName;
             document.getElementById('stat-total-rolls').textContent = formatNumber(state.rolls);
             document.getElementById('stat-points').textContent = formatNumber(state.points);
-            document.getElementById('stat-luck').textContent = state.luck.toFixed(1) + 'x';
+            document.getElementById("stat-luck").textContent = totalLuck.toFixed(2) + "x";            
             document.getElementById('pity-counter').textContent = state.pity;
 
-            // Update Roll Display if a result exists
             if (result) {
                 const img = document.getElementById('rolled-image');
                 img.style.display = 'block';
-                const filename = getFilename(result.name);
-                img.src = `images/${filename}.png`;
-                img.onerror = () => { img.src = getPlaceholderSVG(result.color, result.name[0]); };
+                img.src = `images/${getFilename(result)}.png`;
+                img.onerror = () => { img.src = getPlaceholderSVG(result.color, result.name); };
                 
                 const nameEl = document.getElementById('rolled-name');
-                nameEl.textContent = result.name;
-                nameEl.style.color = result.color;
-                
-                // Apply visual effect class
+                nameEl.textContent = result.name; nameEl.style.color = result.color;
                 nameEl.className = `efx-${result.effect}`;
-                
                 document.getElementById('rolled-odds').textContent = `1 in ${formatNumber(result.odds)}`;
             }
 
-            // Update Upgrade Button
             const cost = getUpgradeCost();
             const btnUp = document.getElementById('btn-upgrade');
             btnUp.textContent = `Upgrade Luck (Cost: ${formatNumber(cost)})`;
@@ -841,17 +1116,12 @@
             const grid = document.getElementById('inventory-grid');
             grid.innerHTML = '';
             
-            let unlockedCount = 0;
-            let highestId = 0;
+            let unlockedCount = 0; let highestId = 0;
 
             rarities.forEach(r => {
                 const count = state.inventory[r.id] || 0;
                 const isUnlocked = count > 0;
-                
-                if (isUnlocked) {
-                    unlockedCount++;
-                    if (r.id > highestId) highestId = r.id;
-                }
+                if (isUnlocked) { unlockedCount++; if (r.id > highestId) highestId = r.id; }
 
                 const el = document.createElement('div');
                 el.className = `inv-item ${isUnlocked ? '' : 'locked'}`;
@@ -859,231 +1129,97 @@
                 if (isUnlocked) {
                     el.style.borderColor = r.color;
                     el.style.boxShadow = `inset 0 0 10px rgba(${hexToRgb(r.color)}, 0.2)`;
-                    
                     const img = document.createElement('img');
-                    img.src = `images/${getFilename(r.name)}.png`;
-                    img.onerror = () => { img.src = getPlaceholderSVG(r.color, r.name[0]); };
+                    img.src = `images/${getFilename(r)}.png`;
+                    img.onerror = () => { img.src = getPlaceholderSVG(r.color, r.name); };
                     el.appendChild(img);
-
                     const badge = document.createElement('div');
-                    badge.className = 'item-count';
-                    badge.textContent = count > 999 ? '999+' : count;
+                    badge.className = 'item-count'; badge.textContent = count > 999 ? '999+' : formatNumber(count);
                     el.appendChild(badge);
                     
-                    // Tooltip logic
                     el.onmouseenter = (e) => showTooltip(e, r, count);
-                    el.onmousemove = moveTooltip;
-                    el.onmouseleave = hideTooltip;
-
-                    // Inspect logic
+                    el.onmousemove = moveTooltip; el.onmouseleave = hideTooltip;
                     el.addEventListener('click', () => openInspect(r, count));
                 }
-                
                 grid.appendChild(el);
             });
 
-            // Update Progress
             document.getElementById('progress-text').textContent = `${unlockedCount}/${rarities.length}`;
             document.getElementById('progress-bar').style.width = `${(unlockedCount / rarities.length) * 100}%`;
             
             const highestName = highestId > 0 ? rarities.find(r => r.id === highestId).name : "None";
             const highestColor = highestId > 0 ? rarities.find(r => r.id === highestId).color : "var(--text-muted)";
             const hText = document.getElementById('highest-text');
-            hText.textContent = highestName;
-            hText.style.color = highestColor;
+            hText.textContent = highestName; hText.style.color = highestColor;
         }
 
-        // Tooltip handlers
         const tooltip = document.getElementById('tooltip');
         function showTooltip(e, rarity, count) {
             tooltip.innerHTML = `<strong style="color:${rarity.color}">${rarity.name}</strong><br>Odds: 1 in ${formatNumber(rarity.odds)}<br>Owned: ${formatNumber(count)}<br>Value: +${formatNumber(rarity.val)} pts`;
-            tooltip.style.opacity = 1;
-            moveTooltip(e);
+            tooltip.style.opacity = 1; moveTooltip(e);
         }
-        function moveTooltip(e) {
-            tooltip.style.left = e.pageX + 15 + 'px';
-            tooltip.style.top = e.pageY + 15 + 'px';
-        }
-        function hideTooltip() {
-            tooltip.style.opacity = 0;
-        }
+        function moveTooltip(e) { tooltip.style.left = e.pageX + 15 + 'px'; tooltip.style.top = e.pageY + 15 + 'px'; }
+        function hideTooltip() { tooltip.style.opacity = 0; }
 
         // --- Inspect Modal Logic ---
         const modal = document.getElementById('inspect-modal');
-        const btnCloseModal = document.getElementById('btn-close-modal');
-
         function openInspect(rarity, count) {
-            document.getElementById('inspect-image').src = `images/${getFilename(rarity.name)}.png`;
-            document.getElementById('inspect-image').onerror = (e) => { e.target.src = getPlaceholderSVG(rarity.color, rarity.name[0]); };
-            
+            document.getElementById('inspect-image').src = `images/${getFilename(rarity)}.png`;
+            document.getElementById('inspect-image').onerror = (e) => { e.target.src = getPlaceholderSVG(rarity.color, rarity.name); };
             const nameEl = document.getElementById('inspect-name');
-            nameEl.textContent = rarity.name;
-            nameEl.style.color = rarity.color;
-            nameEl.className = `efx-${rarity.effect}`; // Apply the visual effect glow
-            
+            nameEl.textContent = rarity.name; nameEl.style.color = rarity.color; nameEl.className = `efx-${rarity.effect}`;
             document.getElementById('inspect-odds').textContent = `Odds: 1 in ${formatNumber(rarity.odds)}`;
             document.getElementById('inspect-owned').textContent = `Owned: ${formatNumber(count)}`;
             document.getElementById('inspect-value').textContent = `Value: +${formatNumber(rarity.val)} pts`;
-            
-            modal.classList.add('active');
-            hideTooltip(); // Hide hover tooltip when modal opens
+            modal.classList.add('active'); hideTooltip();
         }
-
-        function closeModal() {
-            modal.classList.remove('active');
-        }
-
-        btnCloseModal.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal(); // Close if background clicked
-        });
-
-        // Helpers
+        document.getElementById('btn-close-modal').addEventListener('click', () => modal.classList.remove('active'));
+        document.getElementById("btn-shop").onclick = () => {
+        document.getElementById("shop-modal").classList.add("active");
+    };
+        document.getElementById("btn-close-shop").onclick = () => {
+            document.getElementById("shop-modal").classList.remove("active");
+        };
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255,255,255';
         }
 
         // --- Save / Load ---
-        function saveData() {
-            localStorage.setItem('absRngSave', JSON.stringify(state));
+        function saveData() { 
+            state.version = SAVE_VERSION; 
+            localStorage.setItem('absRngSave', JSON.stringify(state)); 
         }
-
         function loadData() {
             const saved = localStorage.getItem('absRngSave');
             if (saved) {
                 try {
-                    state = { ...state, ...JSON.parse(saved) };
-                } catch(e) { console.error("Save load failed", e); }
+                    const parsed = JSON.parse(saved);
+                    if (!parsed.version || parsed.version !== SAVE_VERSION) {
+                        console.log("Save version mismatch. Forcing reset.");
+                        resetSave(true); // true = forced reset
+                        return;
+                    }
+                    state = { ...state, ...parsed };
+                } catch (e) {
+                    console.log("Corrupt save. Resetting.");
+                    resetSave(true);
+                    return;
+                }
             }
-            
-            // Generate default name if missing (runs on first load ever)
             if (!state.playerName) {
-                const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000-9999
+                const randomDigits = Math.floor(1000 + Math.random() * 9000);
                 state.playerName = `Guest_${randomDigits}`;
                 saveData();
             }
-
             updateUI();
         }
+        function resetSave(forced = false) {
+            const preservedName = state.playerName;
 
-        // --- Event Listeners ---
-        document.getElementById('btn-roll').addEventListener('click', triggerRoll);
-
-        document.getElementById('toggle-auto').addEventListener('change', (e) => {
-            if (e.target.checked) {
-                document.getElementById('btn-roll').disabled = true;
-                triggerRoll(); // roll immediately
-                autoRollInterval = setInterval(triggerRoll, 1000);
-            } else {
-                document.getElementById('btn-roll').disabled = false;
-                clearInterval(autoRollInterval);
-            }
-        });
-
-        document.getElementById('btn-upgrade').addEventListener('click', () => {
-            const cost = getUpgradeCost();
-            if (state.points >= cost) {
-                state.points -= cost;
-                state.luck *= 1 + state.luckLevel / 4; // Each upgrade adds 0.5x multiplier
-                state.luckLevel += 1;
-                saveData();
-                updateUI();
-                
-                // Upgrade visual feedback
-                const btn = document.getElementById('btn-upgrade');
-                btn.textContent = "UPGRADED!";
-                btn.style.background = "var(--accent)";
-                setTimeout(() => {
-                    btn.style.background = "";
-                    updateUI(); // Reset text
-                }, 500);
-            }
-        });
-
-        // --- Settings Menu Listeners ---
-        const settingsModal = document.getElementById('settings-modal');
-        
-        document.getElementById('btn-settings').addEventListener('click', () => {
-            document.getElementById('input-name').value = state.playerName;
-            document.getElementById('code-message').textContent = '';
-            document.getElementById('input-code').value = '';
-            
-            // Reset the reset confirmation UI
-            document.getElementById('btn-reset-progress').style.display = 'block';
-            document.getElementById('reset-confirm-area').style.display = 'none';
-
-            settingsModal.classList.add('active');
-        });
-
-        document.getElementById('btn-close-settings').addEventListener('click', () => {
-            settingsModal.classList.remove('active');
-        });
-
-        // Change Name
-        document.getElementById('btn-save-name').addEventListener('click', () => {
-            const input = document.getElementById('input-name').value.trim();
-            if (input.length > 0 && input.length <= 16) {
-                state.playerName = input;
-                saveData();
-                updateUI();
-                
-                const btn = document.getElementById('btn-save-name');
-                const origText = btn.textContent;
-                btn.textContent = "Saved!";
-                btn.style.background = "var(--accent)";
-                setTimeout(() => {
-                    btn.textContent = origText;
-                    btn.style.background = "";
-                }, 1000);
-            }
-        });
-
-        // Redeem Code
-        document.getElementById('btn-redeem').addEventListener('click', () => {
-            const code = document.getElementById('input-code').value.trim().toUpperCase();
-            const msgEl = document.getElementById('code-message');
-            
-            if (!code) return;
-
-            if (state.redeemedCodes.includes(code)) {
-                msgEl.textContent = "Code already redeemed!";
-                msgEl.style.color = "#ff6b6b";
-                return;
-            }
-
-            if (validCodes[code]) {
-                const reward = validCodes[code];
-                state.points += reward;
-                state.redeemedCodes.push(code);
-                saveData();
-                updateUI();
-                
-                msgEl.textContent = `Success! +${formatNumber(reward)} points!`;
-                msgEl.style.color = "#4CAF50";
-            } else {
-                msgEl.textContent = "Invalid code!";
-                msgEl.style.color = "#ff6b6b";
-            }
-        });
-
-        // Reset Progress logic
-        document.getElementById('btn-reset-progress').addEventListener('click', () => {
-            document.getElementById('btn-reset-progress').style.display = 'none';
-            document.getElementById('reset-confirm-area').style.display = 'flex';
-        });
-        
-        document.getElementById('btn-cancel-reset').addEventListener('click', () => {
-            document.getElementById('btn-reset-progress').style.display = 'block';
-            document.getElementById('reset-confirm-area').style.display = 'none';
-        });
-
-        document.getElementById('btn-confirm-reset').addEventListener('click', () => {
-            const preservedName = state.playerName; // Preserve the name
-            
-            // Wipe everything back to default
             state = {
-                inventory: {}, 
+                version: SAVE_VERSION,
+                inventory: {},
                 rolls: 0,
                 points: 0,
                 luckLevel: 1,
@@ -1092,9 +1228,81 @@
                 playerName: preservedName,
                 redeemedCodes: []
             };
-            
+
             saveData();
-            location.reload(); // Reload cleanly resets everything visually
+
+            if (forced) {
+                alert("bon voyage LeNigga, update came up, yo save data went down.");
+            }
+
+            location.reload();
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('btn-roll').addEventListener('click', triggerRoll);
+
+        document.getElementById('toggle-auto').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                if (isPlayingCutscene) return; // Wait until done
+                triggerRoll();
+                if(!isPlayingCutscene) autoRollInterval = setInterval(triggerRoll, 1000);
+            } else {
+                clearInterval(autoRollInterval);
+                autoRollInterval = null;
+            }
+        });
+
+        document.getElementById('btn-upgrade').addEventListener('click', () => {
+            const cost = getUpgradeCost();
+            if (state.points >= cost) {
+                state.points -= cost; state.luck += 1 + (state.luckLevel * 0.25);; state.luckLevel += 1; saveData(); updateUI();
+                const btn = document.getElementById('btn-upgrade');
+                btn.textContent = "UPGRADED!"; btn.style.background = "var(--accent)";
+                setTimeout(() => { btn.style.background = ""; updateUI(); }, 500);
+            }
+        });
+
+        // --- Settings Menu Listeners ---
+        const settingsModal = document.getElementById('settings-modal');
+        document.getElementById('btn-settings').addEventListener('click', () => {
+            document.getElementById('input-name').value = state.playerName;
+            document.getElementById('code-message').textContent = ''; document.getElementById('input-code').value = '';
+            document.getElementById('btn-reset-progress').style.display = 'block'; document.getElementById('reset-confirm-area').style.display = 'none';
+            settingsModal.classList.add('active');
+        });
+        document.getElementById('btn-close-settings').addEventListener('click', () => settingsModal.classList.remove('active'));
+        document.getElementById("buy-minor").addEventListener("click", () => buyPotion(1));
+        document.getElementById("buy-major").addEventListener("click", () => buyPotion(2));
+        document.getElementById("buy-god").addEventListener("click", () => buyPotion(3));
+        document.getElementById('btn-save-name').addEventListener('click', () => {
+            const input = document.getElementById('input-name').value.trim();
+            if (input.length > 0 && input.length <= 16) {
+                state.playerName = input; saveData(); updateUI();
+                const btn = document.getElementById('btn-save-name'); const origText = btn.textContent;
+                btn.textContent = "Saved!"; btn.style.background = "var(--accent)";
+                setTimeout(() => { btn.textContent = origText; btn.style.background = ""; }, 1000);
+            }
+        });
+
+        document.getElementById('btn-redeem').addEventListener('click', () => {
+            const code = document.getElementById('input-code').value.trim().toUpperCase();
+            const msgEl = document.getElementById('code-message');
+            if (!code) return;
+            if (state.redeemedCodes.includes(code)) { msgEl.textContent = "Code already redeemed!"; msgEl.style.color = "#ff6b6b"; return; }
+            if (validCodes[code]) {
+                const reward = validCodes[code]; state.points += reward; state.redeemedCodes.push(code); saveData(); updateUI();
+                msgEl.textContent = `Success! +${formatNumber(reward)} points!`; msgEl.style.color = "#4CAF50";
+            } else { msgEl.textContent = "Invalid code!"; msgEl.style.color = "#ff6b6b"; }
+        });
+
+        document.getElementById('btn-reset-progress').addEventListener('click', () => {
+            document.getElementById('btn-reset-progress').style.display = 'none'; document.getElementById('reset-confirm-area').style.display = 'flex';
+        });
+        document.getElementById('btn-cancel-reset').addEventListener('click', () => {
+            document.getElementById('btn-reset-progress').style.display = 'block'; document.getElementById('reset-confirm-area').style.display = 'none';
+        });
+        document.getElementById('btn-confirm-reset').addEventListener('click', () => {
+        resetSave();
         });
 
         // Initialize
