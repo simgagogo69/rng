@@ -334,6 +334,52 @@
     background: rgba(255,255,255,0.1);
     transform: scale(1.1);
 }
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 6px;
+}
+/* ===== Global Potion HUD (Top Left) ===== */
+#game-potion-ui {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    width: 220px;
+    z-index: 3000;
+
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(6px);
+
+    padding: 10px;
+    border-radius: 12px;
+
+    display: none;
+}
+
+.potion-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.potion-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+#game-potion-bar {
+    height: 100%;
+    width: 0%;
+    background: lime;
+    transition: width 0.1s linear;
+}
     </style>
 </head>
 <body>
@@ -378,6 +424,7 @@
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
                     Pity Status: <span id="pity-counter">0</span> / 100
+                </div>
                 </div>
             </div>
         </div>
@@ -453,21 +500,41 @@
             <button class="modal-close" id="btn-close-shop">&times;</button>
             <h2 style="margin-bottom: 1.5rem; width: 100%; text-align: center;">🛒 Potion Shop</h2>
 
-            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+            <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%; max-height: 40vh; overflow-y: auto;">
 
                 <div class="btn-upgrade" id="buy-minor">
                     🧪 Minor Luck Potion<br>
-                    <span class="desc">+10% Luck for 60s (Cost: 1M)</span>
+                    <span class="desc">5x Luck for 60s (Cost: 1M)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-normal">
+                    🧪 Luck Potion<br>
+                    <span class="desc">50x Luck for 120s (Cost: 1B)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-major">
                     🧪 Major Luck Potion<br>
-                    <span class="desc">+50% Luck for 120s (Cost: 1B)</span>
+                    <span class="desc">1000x Luck for 120s (Cost: 1Qa)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-god">
                     🧪 GOD Potion<br>
-                    <span class="desc">+100% Luck for 30s (Cost: 1Qa)</span>
+                    <span class="desc">100000x Luck for 30s (Cost: 10Qi)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-eclipse">
+                    🩸 Eclipse Convergence Serum<br>
+                    <span class="desc">Grants <span style="color:#8f0303;">"Eclipsed"</span> and 125000x Luck for 2m (Cost: 10Sx)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-void">
+                    🌌 Void Distortion Elixir<br>
+                    <span class="desc">Grants <span style="color:#8a2be2;">"Voidmark"</span> and 125000x Luck for 2m (Cost: 10Sx)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-chrono">
+                    ⏳ Chrono Fracture Tonic<br>
+                    <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 125000x Luck for 2m (Cost: 10Sx)</span>
                 </div>
 
             </div>
@@ -518,7 +585,15 @@
 ">
     🛒
 </button>
-
+<div id="game-potion-ui">
+    <div class="potion-label">
+        <span id="game-active-potion">None</span>
+    </div>
+    <div id="game-status-text" style="font-size:0.7rem; color:#aaa;"></div>
+    <div class="potion-bar-bg">
+        <div id="game-potion-bar"></div>
+    </div>
+</div>
     <script>
         // --- Core Data: 60 Rarities (Scaling to Nonillions) ---
         const rarities = [
@@ -581,7 +656,17 @@
             { id: 57, name: "☾ 𝐄𝐓𝐄𝐑𝐍𝐀𝐋 𝐒𝐈𝐍𝐆𝐔𝐋𝐀𝐑𝐈𝐓𝐘 ☽", img: "eternal_singularity", odds: 5e12, color: "#dededc", effect: 7, val: 4.6e21 },
             { id: 58, name: "✹ 𝐀𝐌𝐀𝐓𝐄𝐑𝐀𝐒𝐔 ✹", img: "amaterasu", odds: 7.5e12, color: "#f2a407", effect: 7, val: 4.8e21 },
             { id: 59, name: "⟡ 𝐓𝐇𝐄 𝐅𝐈𝐑𝐒𝐓 ⟡", img: "the_first", odds: 1e13, color: "#020fa1", effect: 7, val: 1e22 },
-            { id: 60, name: "✦ 𝐓𝐇𝐄 𝐋𝐀𝐒𝐓 ✦", img: "the_last", odds: 1e14, color: "#9e0303", effect: 7, val: 2e22 }
+            { id: 60, name: "✦ 𝐓𝐇𝐄 𝐋𝐀𝐒𝐓 ✦", img: "the_last", odds: 1e14, color: "#9e0303", effect: 7, val: 2e22 },
+            { id: 61, name: "☾ 𝐁𝐋𝐎𝐎𝐃 𝐀𝐒𝐂𝐄𝐍𝐃𝐀𝐍𝐓 ☽", img: "blood_ascendant", odds: 1e13, colour: "#9e0303", effect: 7, val: 1e22, requiredStatus: "eclipsed"},
+            { id: 62, name: "⟡ 𝐍𝐔𝐋𝐋 𝐒𝐎𝐕𝐄𝐑𝐄𝐈𝐆𝐍 ⟡", img: "null_sovereign", odds: 1e13, colour: "#430073", effect: 7, val: 1e22, requiredStatus: "voidmark"},
+            { id: 63, name: "⌛ 𝐓𝐈𝐌𝐄 𝐑𝐄𝐕𝐄𝐍𝐀𝐍𝐓 ⌛", img: "time-revenant", odds: 1e13, colour: "#430073", effect: 7, val: 1e22, requiredStatus: "chronobind"},
+            { id: 64, name: "☠ 𝐂𝐑𝐈𝐌𝐒𝐎𝐍 𝐏𝐀𝐑𝐀𝐃𝐎𝐗 ☠", img: "crimson_paradox", odds: 1e14, colour: "#430073", effect: 7, val: 1e23, requiredStatus: "eclipsed"},
+            { id: 65, name: "⟡ 𝐎𝐁𝐋𝐈𝐓𝐄𝐑𝐀𝐓𝐄𝐃 𝐕𝐎𝐈𝐃 ⟡", img: "obliterated_void", odds: 1e14, colour: "#430073", effect: 7, val: 1e23, requiredStatus: "voidmark"},
+            { id: 66, name: "⟢ 𝐃𝐄𝐒𝐓𝐈𝐍𝐄𝐃 𝐏𝐀𝐑𝐀𝐆𝐎𝐍 ⟣", img: "destined_paragon", odds: 1e14, colour: "#430073", effect: 7, val: 1e23, requiredStatus: "chronobind"},
+            { id: 67, name: "🩸𝐍𝐄𝐕𝐄𝐑-𝐄𝐍𝐃𝐈𝐍𝐆 𝐄𝐂𝐋𝐈𝐏𝐒𝐄🩸", img: "never-ending_eclipse", odds: 1e15, colour: "#430073", effect: 7, val: 1e24, requiredStatus: "eclipsed"},
+            { id: 68, name: "◈ 𝐓𝐇𝐄 𝐕𝐎𝐈𝐃 𝐖𝐈𝐓𝐇𝐈𝐍 ◈", img: "the_void_within", odds: 1e15, colour: "#430073", effect: 7, val: 1e24, requiredStatus: "voidmark"},
+            { id: 69, name: "✦ 𝐓𝐇𝐄 𝐈𝐍𝐄𝐕𝐈𝐓𝐀𝐁𝐋𝐄 ✦", img: "the_inevitable", odds: 1e15, colour: "#430073", effect: 7, val: 1e24, requiredStatus: "chronobind"},
+
         ];
         // --- Potions---
         let potionMultiplier = 1;
@@ -589,6 +674,12 @@
         let potionInterval = null;
         let potionTimeout = null;
         let activePotionName = null;
+        let activeStatusEffect = null;
+        const statusColors = {
+            "voidmark": "#8a2be2",
+            "chronobind": "#ffd700",
+            "eclipsed": "#8f0303",
+        };
         // --- Game State ---
         let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [] };
         const validCodes = {
@@ -708,6 +799,8 @@ function triggerRoll() {
         async function playCutscene(rarity) {
             isPlayingCutscene = true;
             
+            const isStatusTier = rarity.id > 60;
+
             // Pause auto-roll & disable UI
             const autoBtn = document.getElementById('toggle-auto');
             const wasAutoRolling = autoBtn.checked;
@@ -722,7 +815,6 @@ function triggerRoll() {
 
             // Tier Evaluation for Escalation
             const tId = rarity.id;
-            const t31 = tId >= 31
             const t45 = tId >= 45;
             const t50 = tId >= 50;
             const t56 = tId >= 56;
@@ -930,23 +1022,58 @@ function buyPotion(type) {
 
     if (type === 1) {
         cost = 1e6;
-        multiplier = 5.00;
+        multiplier = 5;
         duration = 60000;
         name = "Minor Luck Potion";
+        statusEffect = null;
     }
 
     if (type === 2) {
         cost = 1e9;
-        multiplier = 50.00;
+        multiplier = 50;
         duration = 120000;
         name = "Luck Potion";
+        statusEffect = null;
     }
 
     if (type === 3) {
         cost = 1e15;
-        multiplier = 1000.00;
-        duration = 30000;
+        multiplier = 1000;
+        duration = 90000;
         name = "Major Luck Potion";
+        statusEffect = null;
+    }
+
+    if (type === 4) {
+        cost = 1e19;
+        multiplier = 100000;
+        duration = 60000;
+        name = "God Potion";
+        statusEffect = null;
+    }
+
+    if (type === 5) {
+        cost = 1e22;
+        multiplier = 125000;
+        duration = 120000;
+        name = "Eclipse Convergence Serum";
+        statusEffect = "eclipsed";
+    }
+
+    if (type === 6) {
+        cost = 1e22;
+        multiplier = 125000;
+        duration = 120000;
+        name = "Void Distortion Elixir";
+        statusEffect = "voidmark";
+    }
+
+    if (type === 7) {
+        cost = 1e22;
+        multiplier = 125000;
+        duration = 120000;
+        name = "Chrono Fracture Tonic";
+        statusEffect = "chronobind";
     }
 
     if (state.points < cost) {
@@ -973,11 +1100,11 @@ function buyPotion(type) {
 }
 function completePotionPurchase(cost, multiplier, duration, name) {
     state.points -= cost;
-    activatePotion(multiplier, duration, name);
+    activatePotion(multiplier, duration, name, statusEffect);
     saveData();
     updateUI();
 }
-function activatePotion(multiplier, duration, name) {
+function activatePotion(multiplier, duration, name, statusEffect = null) {
 
     // Always clear old timers
     if (potionTimeout) clearTimeout(potionTimeout);
@@ -986,18 +1113,42 @@ function activatePotion(multiplier, duration, name) {
     potionMultiplier = multiplier;
     activePotionName = name;
     potionEndTime = Date.now() + duration;
+    activeStatusEffect = statusEffect;
 
     document.getElementById("active-potion").textContent =
         `${name} (${multiplier}x)`;
 
-    const bar = document.getElementById("potion-timer-bar");
-    bar.style.width = "100%";
+const shopBar = document.getElementById("potion-timer-bar");
+const gameBar = document.getElementById("game-potion-bar");
+
+shopBar.style.width = "100%";
+gameBar.style.width = "100%";
+
+document.getElementById("game-potion-ui").style.display = "block";
+document.getElementById("game-active-potion").textContent = name;
+    
+const label = document.getElementById("game-active-potion");
+
+if (statusEffect) {
+    const color = statusColors[statusEffect] || "#ffffff";
+
+    label.innerHTML = `
+        ${name} 
+        <span style="color:${color}; font-weight:600;">
+            [${statusEffect.toUpperCase()}]
+        </span>
+    `;
+} else {
+    label.textContent = name;
+}
 
     // Animate countdown
     potionInterval = setInterval(() => {
         const remaining = potionEndTime - Date.now();
         const percent = Math.max(0, (remaining / duration) * 100);
-        bar.style.width = percent + "%";
+
+        shopBar.style.width = percent + "%";
+        gameBar.style.width = percent + "%";
 
         if (remaining <= 0) {
             clearInterval(potionInterval);
@@ -1272,8 +1423,12 @@ scheduleNextGlobalAnnounce();
         });
         document.getElementById('btn-close-settings').addEventListener('click', () => settingsModal.classList.remove('active'));
         document.getElementById("buy-minor").addEventListener("click", () => buyPotion(1));
-        document.getElementById("buy-major").addEventListener("click", () => buyPotion(2));
-        document.getElementById("buy-god").addEventListener("click", () => buyPotion(3));
+        document.getElementById("buy-normal").addEventListener("click", () => buyPotion(2));
+        document.getElementById("buy-major").addEventListener("click", () => buyPotion(3));
+        document.getElementById("buy-god").addEventListener("click", () => buyPotion(4));
+        document.getElementById("buy-eclipse").addEventListener("click", () => buyPotion(5));
+        document.getElementById("buy-void").addEventListener("click", () => buyPotion(6));
+        document.getElementById("buy-chrono").addEventListener("click", () => buyPotion(7));
         document.getElementById('btn-save-name').addEventListener('click', () => {
             const input = document.getElementById('input-name').value.trim();
             if (input.length > 0 && input.length <= 16) {
