@@ -537,6 +537,21 @@
                     <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 125000x Luck for 2m (Cost: 10Sx)</span>
                 </div>
 
+                <div class="btn-upgrade" id="buy-potent-eclipse">
+                    🩸 Potent Eclipse Convergence Serum<br>
+                    <span class="desc">Grants <span style="color:#8f0303;">"Eclipsed"</span> and 500000x Luck for 4m (Cost: 1Sp)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-potent-void">
+                    🌌 Potent Void Distortion Elixir<br>
+                    <span class="desc">Grants <span style="color:#8a2be2;">"Voidmark"</span> and 500000x Luck for 4m (Cost: 1Sp)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-potent-chrono">
+                    ⏳ Potent Chrono Fracture Tonic<br>
+                    <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 500000x Luck for 4m (Cost: 1Sp)</span>
+                </div>
+
             </div>
 
             <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
@@ -686,7 +701,8 @@
             'RELEASE': 1000,
             'SIMGAGOGO69': 10000,
             'WUPDATE': 2000,
-            'CHEATERMEATBEATER': 10000000000
+            'CHEATERMEATBEATER': 10000000000,
+            'AVISARMPITS': 1000000000000000000000000
         };
         const SAVE_VERSION = 3;
         let autoRollInterval = null;
@@ -1081,6 +1097,30 @@ function buyPotion(type) {
         statusEffect = "chronobind";
     }
 
+    if (type === 8) {
+        cost = 1e24;
+        multiplier = 500000;
+        duration = 240000;
+        name = "Potent Eclipse Convergence Serum";
+        statusEffect = "eclipsed";
+    }
+
+    if (type === 9) {
+        cost = 1e24;
+        multiplier = 500000;
+        duration = 240000;
+        name = "Potent Void Distortion Elixir";
+        statusEffect = "voidmark";
+    }
+
+    if (type === 10) {
+        cost = 1e24;
+        multiplier = 500000;
+        duration = 240000;
+        name = "Potent Chrono Fracture Tonic";
+        statusEffect = "chronobind";
+    }
+
     if (state.points < cost) {
         showPopup(
             `You're broke. You need ${formatNumber(cost)} points.`,
@@ -1434,6 +1474,9 @@ scheduleNextGlobalAnnounce();
         document.getElementById("buy-eclipse").addEventListener("click", () => buyPotion(5));
         document.getElementById("buy-void").addEventListener("click", () => buyPotion(6));
         document.getElementById("buy-chrono").addEventListener("click", () => buyPotion(7));
+        document.getElementById("buy-potent-eclipse").addEventListener("click", () => buyPotion(8));
+        document.getElementById("buy-potent-void").addEventListener("click", () => buyPotion(9));
+        document.getElementById("buy-potent-chrono").addEventListener("click", () => buyPotion(10));
         document.getElementById('btn-save-name').addEventListener('click', () => {
             const input = document.getElementById('input-name').value.trim();
             if (input.length > 0 && input.length <= 16) {
