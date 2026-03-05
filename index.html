@@ -703,6 +703,7 @@
             'WUPDATE': 2000,
             'CHEATERMEATBEATER': 10000000000,
             'AVISARMPITS': 1000000000000000000000000,
+            'IHATEMAINSTREAMGIRLS': 10000000000000000000000000
         };
         const SAVE_VERSION = 3;
         let autoRollInterval = null;
@@ -820,8 +821,6 @@ function triggerRoll() {
         async function playCutscene(rarity) {
             isPlayingCutscene = true;
             
-            const isStatusTier = rarity.id > 60;
-
             // Pause auto-roll & disable UI
             const autoBtn = document.getElementById('toggle-auto');
             const wasAutoRolling = autoBtn.checked;
