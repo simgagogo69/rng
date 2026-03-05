@@ -1137,7 +1137,7 @@ function buyPotion(type) {
             "Doing this will replace your current potion.",
             "I know",
             "Nevermind",
-            () => completePotionPurchase(cost, multiplier, duration, name)
+            () => { if (State.points < cost) { completePotionPurchase(cost, multiplier, duration, name); } }
         );
         return;
     }
