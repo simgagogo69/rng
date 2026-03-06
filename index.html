@@ -754,7 +754,7 @@
             "???": "#ffffff",
         };
         // --- Game State ---
-        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0 };
+        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0, prestigeLuck: 0 };
         const validCodes = {
             'RELEASE': 1000,
             'SIMGAGOGO69': 10000,
@@ -1647,12 +1647,13 @@ if (statusEffect) {
                 rolls: 0,
                 points: 0,
                 luckLevel: 1,
-                luck: 1 + bonus, // Apply prestige bonus
+                luck: 1 + prestigeLuck + bonus, // Apply prestige bonus
                 pity: 0,
                 playerName: preservedName,
                 redeemedCodes: [],
                 prestigeCount: (state.prestigeCount || 0) + 1,
-                totalRolls: state.totalRolls
+                totalRolls: state.totalRolls,
+                prestigeLuck: state.prestigeLuck + bonus,
             };
 
             // Clear active potions
@@ -1886,7 +1887,9 @@ scheduleNextGlobalAnnounce();
                 playerName: preservedName,
                 redeemedCodes: [], 
                 prestigeCount: 0, 
-                totalRolls: 0
+                totalRolls: 0,
+                prestigeLuck: 0
+                
             };
 
             saveData();
