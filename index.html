@@ -1872,6 +1872,9 @@ scheduleNextGlobalAnnounce();
             if (state.prestigeCount === 0) {
                 state.totalRolls = state.rolls;
             }
+            if(!state.prestigeLuck) {
+                state.prestigeLuck = 0
+            }
             updateUI();
         }
         function resetSave(forced = false) {
