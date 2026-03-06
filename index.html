@@ -1613,7 +1613,7 @@ if (statusEffect) {
         // --- Prestige System ---
         function calculatePrestigeBonus() {
             // 100k rolls = +1x luck
-            return Math.round((state.totalRolls / 100000) * 10) / 10;
+            return Math.round((state.rolls / 100000) * 10) / 10;
         }
 
         function triggerPrestige() {
@@ -1640,7 +1640,7 @@ if (statusEffect) {
         }
 
         function completePrestige(bonus) {
-            const preservedName = state.playerName;            
+            const preservedName = state.playerName;
             // Reset all progress
             state = {
                 version: SAVE_VERSION,
