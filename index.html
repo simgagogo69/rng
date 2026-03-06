@@ -572,17 +572,17 @@
 
                 <div class="btn-upgrade" id="buy-eldritch">
                     💤 Eldritch Sleep Brew<br>
-                    <span class="desc">Grants <span style="color:#0235b5;">"Dead Sleep"</span> and 1000000x Luck for 4m (Cost: 100Sp)</span>
+                    <span class="desc">Grants <span style="color:#0235b5;">"Dead Sleep"</span> and 1000000x Luck for 4m (Cost: 10Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-virtue">
                     🕊️ Elixir of Vitrues<br>
-                    <span class="desc">Grants <span style="color:#ffee8b;">"Good Samaritan"</span> and 5000000x Luck for 3m (Cost: 500Sp)</span>
+                    <span class="desc">Grants <span style="color:#ffee8b;">"Good Samaritan"</span> and 5000000x Luck for 3m (Cost: 100Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-sin">
                     👁️ Tonic of Sins<br>
-                    <span class="desc">Grants <span style="color:#d52b00;">"Misanthropic Mind"</span> and 5000000x Luck for 3m (Cost: 500Sp)</span>
+                    <span class="desc">Grants <span style="color:#d52b00;">"Misanthropic Mind"</span> and 5000000x Luck for 3m (Cost: 100Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-unknown">
@@ -1487,7 +1487,7 @@ function buyPotion(type) {
     }
 
     if (type === 11) {
-        cost = 1e26;
+        cost = 1e25;
         multiplier = 1000000;
         duration = 240000;
         name = "Eldtritch Sleep Brew";
@@ -1495,7 +1495,7 @@ function buyPotion(type) {
     }
 
     if (type === 12) {
-        cost = 5e26;
+        cost = 1e26;
         multiplier = 5000000;
         duration = 180000;
         name = "Elixir of Vitrues";
@@ -1503,7 +1503,7 @@ function buyPotion(type) {
     }
 
     if (type === 13) {
-        cost = 5e26;
+        cost = 1e26;
         multiplier = 5000000;
         duration = 180000;
         name = "Tonic of Sins";
