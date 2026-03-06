@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favicon.png">
     <title>Simga's RNG</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap');
@@ -330,6 +331,14 @@
             transform-origin: center; opacity: 0.15;
             z-index: 5;
         }
+        
+                @keyframes fireFlicker {
+            0% { background: radial-gradient(circle at center, rgba(255, 100, 0, 0.3) 0%, rgba(255, 50, 0, 0.1) 40%, transparent 70%); }
+            25% { background: radial-gradient(circle at center, rgba(255, 80, 0, 0.25) 0%, rgba(255, 60, 0, 0.15) 40%, transparent 70%); }
+            50% { background: radial-gradient(circle at center, rgba(255, 120, 0, 0.35) 0%, rgba(255, 70, 0, 0.2) 40%, transparent 70%); }
+            75% { background: radial-gradient(circle at center, rgba(255, 90, 0, 0.28) 0%, rgba(255, 50, 0, 0.12) 40%, transparent 70%); }
+            100% { background: radial-gradient(circle at center, rgba(255, 100, 0, 0.3) 0%, rgba(255, 50, 0, 0.1) 40%, transparent 70%); }
+        }
         #btn-shop:hover {
     background: rgba(255,255,255,0.1);
     transform: scale(1.1);
@@ -392,6 +401,10 @@
                 <span class="stat-value" id="stat-total-rolls">0</span>
             </div>
             <div class="stat-box">
+                <span class="stat-label">Rolls This Run</span>
+                <span class="stat-value" id="stat-rolls">0</span>
+            </div>
+            <div class="stat-box">
                 <span class="stat-label">Points</span>
                 <span class="stat-value" id="stat-points" style="color: #ffd700;">0</span>
             </div>
@@ -399,8 +412,13 @@
                 <span class="stat-label">Luck Multiplier</span>
                 <span class="stat-value" id="stat-luck">1.0x</span>
             </div>
+            <div class="stat-box">
+                <span class="stat-label">Prestige</span>
+                <span class="stat-value" id="stat-prestige" style="color: #FFD700;">0</span>
+            </div>
         </div>
         <div style="display: flex; align-items: center; gap: 1rem;">
+            <button id="btn-prestige" class="btn-upgrade" style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; font-weight: bold; border: 2px solid #FFD700;">✨ Prestige</button>
             <span id="display-player-name" style="font-weight: bold; color: var(--accent);"></span>
             <button id="btn-settings" class="btn-settings-icon">⚙️</button>
         </div>
@@ -468,7 +486,7 @@
             <div class="settings-section">
                 <label>Player Name</label>
                 <div style="display: flex; gap: 0.5rem; width: 100%;">
-                    <input type="text" id="input-name" maxlength="16" placeholder="Enter new name">
+                    <input type="text" id="input-name" maxlength="32" placeholder="Enter new name">
                     <button id="btn-save-name" class="btn-upgrade">Save</button>
                 </div>
             </div>
@@ -552,6 +570,25 @@
                     <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 500000x Luck for 4m (Cost: 1Sp)</span>
                 </div>
 
+                <div class="btn-upgrade" id="buy-eldritch">
+                    💤 Eldritch Sleep Brew<br>
+                    <span class="desc">Grants <span style="color:#0235b5;">"Dead Sleep"</span> and 1000000x Luck for 4m (Cost: 100Sp)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-virtue">
+                    🕊️ Elixir of Vitrues<br>
+                    <span class="desc">Grants <span style="color:#ffee8b;">"Good Samaritan"</span> and 5000000x Luck for 3m (Cost: 500Sp)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-sin">
+                    👁️ Tonic of Sins<br>
+                    <span class="desc">Grants <span style="color:#d52b00;">"Misanthropic Mind"</span> and 5000000x Luck for 3m (Cost: 500Sp)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-unknown">
+                    ❓ Liquid of ???<br>
+                    <span class="desc">Grants <span style="color:#ffffff;">"???"</span> and 10000000x Luck for 1m (Cost: 1Oc)</span>
+                </div>
             </div>
 
             <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
@@ -672,16 +709,33 @@
             { id: 58, name: "✹ 𝐀𝐌𝐀𝐓𝐄𝐑𝐀𝐒𝐔 ✹", img: "amaterasu", odds: 7.5e12, color: "#f2a407", effect: 7, val: 4.8e21 },
             { id: 59, name: "⟡ 𝐓𝐇𝐄 𝐅𝐈𝐑𝐒𝐓 ⟡", img: "the_first", odds: 1e13, color: "#020fa1", effect: 7, val: 1e22 },
             { id: 60, name: "✦ 𝐓𝐇𝐄 𝐋𝐀𝐒𝐓 ✦", img: "the_last", odds: 1e14, color: "#9e0303", effect: 7, val: 2e22 },
-            { id: 61, name: "☾ 𝐁𝐋𝐎𝐎𝐃 𝐀𝐒𝐂𝐄𝐍𝐃𝐀𝐍𝐓 ☽", img: "blood_ascendant", odds: 1e13, color: "#9e0303", effect: 7, val: 1e22, requiredStatus: "eclipsed"},
-            { id: 62, name: "⟡ 𝐍𝐔𝐋𝐋 𝐒𝐎𝐕𝐄𝐑𝐄𝐈𝐆𝐍 ⟡", img: "null_sovereign", odds: 1e13, color: "#430073", effect: 7, val: 1e22, requiredStatus: "voidmark"},
-            { id: 63, name: "⌛ 𝐓𝐈𝐌𝐄 𝐑𝐄𝐕𝐄𝐍𝐀𝐍𝐓 ⌛", img: "time_revenant", odds: 1e13, color: "#fadb43", effect: 7, val: 1e22, requiredStatus: "chronobind"},
-            { id: 64, name: "☠ 𝐂𝐑𝐈𝐌𝐒𝐎𝐍 𝐏𝐀𝐑𝐀𝐃𝐎𝐗 ☠", img: "crimson_paradox", odds: 1e14, color: "#8f0303", effect: 7, val: 1e23, requiredStatus: "eclipsed"},
-            { id: 65, name: "⟡ 𝐎𝐁𝐋𝐈𝐓𝐄𝐑𝐀𝐓𝐄𝐃 𝐕𝐎𝐈𝐃 ⟡", img: "obliterated_void", odds: 1e14, color: "#6e99ff", effect: 7, val: 1e23, requiredStatus: "voidmark"},
-            { id: 66, name: "⟢ 𝐃𝐄𝐒𝐓𝐈𝐍𝐄𝐃 𝐏𝐀𝐑𝐀𝐆𝐎𝐍 ⟣", img: "destined_paragon", odds: 1e14, color: "#e3e156", effect: 7, val: 1e23, requiredStatus: "chronobind"},
-            { id: 67, name: "🩸𝐍𝐄𝐕𝐄𝐑-𝐄𝐍𝐃𝐈𝐍𝐆 𝐄𝐂𝐋𝐈𝐏𝐒𝐄🩸", img: "never-ending_eclipse", odds: 1e15, color: "#8f0303", effect: 7, val: 1e24, requiredStatus: "eclipsed"},
-            { id: 68, name: "◈ 𝐓𝐇𝐄 𝐕𝐎𝐈𝐃 𝐖𝐈𝐓𝐇𝐈𝐍 ◈", img: "the_void_within", odds: 1e15, color: "#25015c", effect: 7, val: 1e24, requiredStatus: "voidmark"},
-            { id: 69, name: "✦ 𝐓𝐇𝐄 𝐈𝐍𝐄𝐕𝐈𝐓𝐀𝐁𝐋𝐄 ✦", img: "the_inevitable", odds: 1e15, color: "#e3e156", effect: 7, val: 1e24, requiredStatus: "chronobind"},
-
+            { id: 61, name: "☾ 𝐁𝐋𝐎𝐎𝐃 𝐀𝐒𝐂𝐄𝐍𝐃𝐀𝐍𝐓 ☽", img: "blood_ascendant", odds: 1e13, color: "#9e0303", effect: 7, val: 1e23, requiredStatus: "eclipsed"},
+            { id: 62, name: "⟡ 𝐍𝐔𝐋𝐋 𝐒𝐎𝐕𝐄𝐑𝐄𝐈𝐆𝐍 ⟡", img: "null_sovereign", odds: 1e13, color: "#430073", effect: 7, val: 1e23, requiredStatus: "voidmark"},
+            { id: 63, name: "⌛ 𝐓𝐈𝐌𝐄 𝐑𝐄𝐕𝐄𝐍𝐀𝐍𝐓 ⌛", img: "time_revenant", odds: 1e13, color: "#fadb43", effect: 7, val: 1e23, requiredStatus: "chronobind"},
+            { id: 64, name: "☠ 𝐂𝐑𝐈𝐌𝐒𝐎𝐍 𝐏𝐀𝐑𝐀𝐃𝐎𝐗 ☠", img: "crimson_paradox", odds: 1e14, color: "#8f0303", effect: 7, val: 1e24, requiredStatus: "eclipsed"},
+            { id: 65, name: "⟡ 𝐎𝐁𝐋𝐈𝐓𝐄𝐑𝐀𝐓𝐄𝐃 𝐕𝐎𝐈𝐃 ⟡", img: "obliterated_void", odds: 1e14, color: "#6e99ff", effect: 7, val: 1e24, requiredStatus: "voidmark"},
+            { id: 66, name: "⟢ 𝐃𝐄𝐒𝐓𝐈𝐍𝐄𝐃 𝐏𝐀𝐑𝐀𝐆𝐎𝐍 ⟣", img: "destined_paragon", odds: 1e14, color: "#e3e156", effect: 7, val: 1e24, requiredStatus: "chronobind"},
+            { id: 67, name: "🩸𝐍𝐄𝐕𝐄𝐑-𝐄𝐍𝐃𝐈𝐍𝐆 𝐄𝐂𝐋𝐈𝐏𝐒𝐄🩸", img: "never-ending_eclipse", odds: 1e15, color: "#8f0303", effect: 7, val: 1e25, requiredStatus: "eclipsed"},
+            { id: 68, name: "◈ 𝐓𝐇𝐄 𝐕𝐎𝐈𝐃 𝐖𝐈𝐓𝐇𝐈𝐍 ◈", img: "the_void_within", odds: 1e15, color: "#25015c", effect: 7, val: 1e25, requiredStatus: "voidmark"},
+            { id: 69, name: "✦ 𝐓𝐇𝐄 𝐈𝐍𝐄𝐕𝐈𝐓𝐀𝐁𝐋𝐄 ✦", img: "the_inevitable", odds: 1e15, color: "#e3e156", effect: 7, val: 1e25, requiredStatus: "chronobind"},
+            { id: 70, name: "【 𓆩 𝐍𝐘𝐀𝐑𝐋𝐀𝐓𝐇𝐎𝐓𝐄𝐏 𓆪】", img: "nyarlathotep", odds: 1e15, color: "#E6A6EE", effect: 7, val: 1e25, requiredStatus: "dead sleep"},
+            { id: 71, name: "【𖤐 𝐘𝐎𝐆-𝐒𝐎𝐓𝐇𝐎𝐓𝐇 𖤐】", img: "yog-sothoth", odds: 5e15, color: "#4F48AC", effect: 7, val: 5e25, requiredStatus: "dead sleep"},
+            { id: 72, name: "【⟡✦ 𝐀 𝐙 𝐀 𝐓 𝐇 𝐎 𝐓 𝐇 ✦⟡】", img: "azathoth", odds: 1e16, color: "#ffffff", effect: 7, val: 5e26, requiredStatus: "dead sleep"},
+            { id: 73, name: "【 ✦ 𝐏𝐔𝐃𝐈𝐂𝐈𝐓𝐈𝐀 ✦ 】", img: "pudicita", odds: 1e17, color: "#FBFDDC", effect: 7, val: 1e27, requiredStatus: "good samaritan"},
+            { id: 74, name: "〖 ✧ 𝐅𝐈𝐃𝐄𝐒 ✧ 〗", img: "fides", odds: 1e17, color: "#FEF0B8", effect: 7, val: 1e27, requiredStatus: "good samaritan"},
+            { id: 75, name: "《 ❂ 𝐎𝐏𝐄𝐑𝐀𝐓𝐈𝐎 ❂ 》", img: "operatio", odds: 1e17, color: "#FEF0B8", effect: 7, val: 1e27, requiredStatus: "good samaritan"},
+            { id: 76, name: "〔 ✶ 𝐂𝐎𝐍𝐂𝐎𝐑𝐃𝐈𝐀 ✶ 〕  ", img: "concordia", odds: 1e17, color: "#FBFDDC", effect: 7, val: 1e27, requiredStatus: "good samaritan"},
+            { id: 77, name: "【 ✧ 𝐒𝐎𝐁𝐑𝐈𝐄𝐓𝐀𝐒 ✧ 】", img: "sobrietas", odds: 1e17, color: "#85A2BF", effect: 7, val: 1e27, requiredStatus: "good samaritan"},
+            { id: 78, name: "〖 ✦ 𝐏𝐀𝐓𝐈𝐄𝐍𝐓𝐈𝐀 ✦ 〗", img: "patentia", odds: 1e17, color: "#FBFDDC", effect: 7, val: 1e27, requiredStatus: "good samaritan"},
+            { id: 79, name: "《 ❂ 𝐌𝐄𝐍𝐒 𝐇𝐔𝐌𝐈𝐋𝐈𝐒 ❂ 》", img: "mens_humilis", odds: 1e17, color: "#FEF0B8", effect: 7, val: 1e27, requiredStatus: "good samaritan"},
+            { id: 80, name: "【 ⟁ 𝐒𝐎𝐃𝐎𝐌𝐈𝐓𝐀 𝐋𝐈𝐁𝐈𝐃𝐎 ⟁ 】", img: "sodomita_libido", odds: 1e17, color: "#FF3C43", effect: 7, val: 1e27, requiredStatus: "misanthropic mind"},
+            { id: 81, name: "〖 ⟠ 𝐕𝐄𝐓𝐄𝐑𝐔𝐌 𝐂𝐔𝐋𝐓𝐔𝐑𝐀 𝐃𝐄𝐎𝐑𝐔𝐌 ⟠ 〗", img: "veterum_cultura_deorum", odds: 1e17, color: "#FF3C43", effect: 7, val: 1e27, requiredStatus: "misanthropic mind"},
+            { id: 82, name: "《 ⬡ 𝐀𝐕𝐀𝐑𝐈𝐓𝐈𝐀 ⬡ 》", img: "avaritia", odds: 1e17, color: "#FEF0B8", effect: 7, val: 1e27, requiredStatus: "misanthropic mind"},
+            { id: 83, name: "〔 ⌬ 𝐃𝐈𝐒𝐂𝐎𝐑𝐃𝐈𝐀 ⌬ 〕", img: "discordia", odds: 1e17, color: "#744283", effect: 7, val: 1e27, requiredStatus: "misanthropic mind"},
+            { id: 84, name: "【 ✹ 𝐋𝐔𝐗𝐔𝐑𝐈𝐀 ✹ 】", img: "luxuria", odds: 1e17, color: "#A92C2E", effect: 7, val: 1e27, requiredStatus: "misanthropic mind"},
+            { id: 85, name: "〖 ✺ 𝐈𝐑𝐀 ✺ 〗", img: "ira", odds: 1e17, color: "#A92C2E", effect: 7, val: 1e27, requiredStatus: "misanthropic mind"},
+            { id: 86, name: "《 ⟢ 𝐒𝐔𝐏𝐄𝐑𝐁𝐈𝐀 ⟣ 》", img: "superbia", odds: 1e17, color: "#995479", effect: 7, val: 1e27, requiredStatus: "misanthropic mind"},
+            { id: 87, name: "¿⸮? 𝕀  𝔻 𝕆 ℕ ' 𝕋  𝕂 ℕ 𝕆 𝕎 ?⸮¿", img: "unknown", odds: 1e18, colour: "???", effect: 7, val: 1e28, requiredStatus: "???"},
         ];
         // --- Potions---
         let potionMultiplier = 1;
@@ -694,16 +748,22 @@
             "voidmark": "#8a2be2",
             "chronobind": "#ffd700",
             "eclipsed": "#8f0303",
+            "dead sleep": "#0235b5",
+            "good samaritan": "#ffee8b",
+            "misanthropic mind": "#d52b00",
+            "???": "#ffffff",
         };
         // --- Game State ---
-        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [] };
+        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0 };
         const validCodes = {
             'RELEASE': 1000,
             'SIMGAGOGO69': 10000,
             'WUPDATE': 2000,
             'CHEATERMEATBEATER': 10000000000,
             'AVISARMPITS': 1000000000000000000000000,
-            'IHATEMAINSTREAMGIRLS': 10000000000000000000000000
+            'IHATEMAINSTREAMGIRLS': 10000000000000000000000000,
+            'ELDRITCHSLUMBER': 250000000000000000000000000,
+            'VIRTUESANDSINS': 250000000000000000000000000
         };
         const SAVE_VERSION = 3;
         let autoRollInterval = null;
@@ -769,9 +829,14 @@
             const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.02));
             const currentLuck = (state.luck * potionMultiplier) * pityMulti;
             let roll = Math.random();
+            
             const availableRarities = rarities.filter(r => {
-                if (!r.requiredStatus) return true;
-                return r.requiredStatus === activeStatusEffect;
+                // If item requires a status, it must match the active status
+                if (r.requiredStatus) {
+                    return r.requiredStatus === activeStatusEffect;
+                }
+                // Items with no required status are always available
+                return true;
             });
 
             for (let i = availableRarities.length - 1; i >= 0; i--) {
@@ -791,6 +856,7 @@ function triggerRoll() {
 
     // Backend processing
     state.rolls++;
+    state.totalRolls++;
     const highestId = Math.max(0, ...Object.keys(state.inventory).map(Number));
     const badRollThreshold = Math.max(highestId - 5, 7); 
     if (result.id <= badRollThreshold) { state.pity++; } else { state.pity = 0; }
@@ -817,7 +883,7 @@ function triggerRoll() {
             nameEl.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both';
         }
 
-        // --- Cinematic Cutscene Engine ---
+         // --- Cinematic Cutscene Engine ---
         async function playCutscene(rarity) {
             isPlayingCutscene = true;
             
@@ -835,6 +901,10 @@ function triggerRoll() {
 
             // Tier Evaluation for Escalation
             const tId = rarity.id;
+            const isHolyTier = tId >= 73 && tId <= 79;
+            const isDemonicTier = tId >= 80 && tId <= 86;
+            const isID87 = tId === 87;
+            const isEpicTier = tId >= 70;
             const t45 = tId >= 45;
             const t50 = tId >= 50;
             const t56 = tId >= 56;
@@ -850,16 +920,232 @@ function triggerRoll() {
             star.style.boxShadow = `0 0 30px 10px ${rarity.color}`;
             overlay.appendChild(star);
 
-            let buildupTime = t56 ? 3000 : 1800;
+            let buildupTime = isEpicTier ? 5000 : (t56 ? 3000 : 1800);
+            let targetX = isEpicTier ? '50%' : (t50 ? '30%' : '50%');
             
             star.animate([
-                { left: '-10%', transform: 'translate(-50%, -50%) scale(1)' },
-                { left: t50 ? '30%' : '50%', transform: 'translate(-50%, -50%) scale(1.5)' }
+                { left: '-10%', transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                { left: targetX, transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1 }
             ], { duration: buildupTime, fill: 'forwards', easing: 'ease-in' });
+
+// Add holy trail for holy tier
+if (isHolyTier) {
+    let trailInterval = setInterval(() => {
+        // Get actual star position from DOM
+        const starRect = star.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+        const starScreenX = starRect.left - overlayRect.left + starRect.width / 2;
+        const starScreenY = starRect.top - overlayRect.top + starRect.height / 2;
+        
+        // Convert to percentage for overlay
+        const starPercentX = (starScreenX / overlayRect.width) * 100;
+        
+        const trail = document.createElement('div');
+        trail.style.position = 'absolute';
+        trail.style.left = starPercentX + '%';
+        trail.style.top = '50%';
+        trail.style.width = '20px';
+        trail.style.height = '20px';
+        trail.style.borderRadius = '50%';
+        trail.style.background = 'radial-gradient(circle, #ffee8b 0%, #ffd700 100%)';
+        trail.style.boxShadow = '0 0 20px #ffee8b';
+        trail.style.zIndex = '8';
+        trail.style.opacity = '0.6';
+        overlay.appendChild(trail);
+
+        trail.animate([
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.6 },
+            { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 }
+        ], { duration: 500, easing: 'ease-out' }).onfinish = () => trail.remove();
+    }, 100);
+    
+    setTimeout(() => clearInterval(trailInterval), buildupTime);
+}
+
+// Add demonic fire trail for demonic tier
+if (isDemonicTier) {
+    let fireInterval = setInterval(() => {
+        // Get actual star position from DOM
+        const starRect = star.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+        const starScreenX = starRect.left - overlayRect.left + starRect.width / 2;
+        const starScreenY = starRect.top - overlayRect.top + starRect.height / 2;
+        
+        // Convert to percentage for overlay
+        const starPercentX = (starScreenX / overlayRect.width) * 100;
+        
+        const fire = document.createElement('div');
+        fire.style.position = 'absolute';
+        fire.style.left = starPercentX + '%';
+        fire.style.top = '50%';
+        fire.style.width = '25px';
+        fire.style.height = '25px';
+        fire.style.borderRadius = '50%';
+        fire.style.background = 'radial-gradient(circle, #ff3c43 0%, #8f0303 100%)';
+        fire.style.boxShadow = '0 0 25px #ff3c43, inset 0 0 10px #ffaa00';
+        fire.style.zIndex = '8';
+        fire.style.opacity = '0.7';
+        overlay.appendChild(fire);
+
+        fire.animate([
+            { transform: 'translate(-50%, -50%) scale(1) rotate(0deg)', opacity: 0.7 },
+            { transform: 'translate(-50%, -50%) scale(0.3) rotate(180deg)', opacity: 0 }
+        ], { duration: 600, easing: 'ease-out' }).onfinish = () => fire.remove();
+    }, 120);
+    
+    setTimeout(() => clearInterval(fireInterval), buildupTime);
+}
+
+// Add question mark trail for ID 87
+if (isID87) {
+    const questionMarks = ['?', '⸮', '¿'];
+    let qMarkIndex = 0;
+    let qTrailInterval = setInterval(() => {
+        // Get actual star position from DOM
+        const starRect = star.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+        const starScreenX = starRect.left - overlayRect.left + starRect.width / 2;
+        const starScreenY = starRect.top - overlayRect.top + starRect.height / 2;
+        
+        // Convert to percentage for overlay
+        const starPercentX = (starScreenX / overlayRect.width) * 100;
+        const starPercentY = (starScreenY / overlayRect.height) * 100;
+        
+        const qMark = document.createElement('div');
+        qMark.style.position = 'absolute';
+        qMark.style.left = starPercentX + '%';
+        qMark.style.top = starPercentY + '%';
+        qMark.style.fontSize = '24px';
+        qMark.style.color = rarity.color;
+        qMark.style.fontWeight = 'bold';
+        qMark.style.zIndex = '8';
+        qMark.style.opacity = '0.7';
+        qMark.textContent = questionMarks[qMarkIndex % 3];
+        qMarkIndex++;
+        overlay.appendChild(qMark);
+
+        qMark.animate([
+            { transform: 'translate(-50%, -50%) scale(1)', opacity: 0.7 },
+            { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 }
+        ], { duration: 500, easing: 'ease-out' }).onfinish = () => qMark.remove();
+    }, 100);
+    
+    setTimeout(() => clearInterval(qTrailInterval), buildupTime);
+    overlay.qTrailInterval = qTrailInterval; // Store for cleanup if needed
+}
 
             await sleep(buildupTime);
 
-            if (t50) {
+            if (isID87) {
+                star.animate([
+                    { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1 },
+                    { transform: 'translate(-50%, -50%) scale(1.2)', opacity: 0 }
+                ], { duration: 3000, fill: 'forwards', easing: 'ease-out' });
+
+                await sleep(3000);
+
+                // Start question mark rain in background
+                const questionMarks = ['?', '⸮', '¿'];
+                let rainInterval = setInterval(() => {
+                    const qMark = document.createElement('div');
+                    qMark.style.position = 'absolute';
+                    qMark.style.left = Math.random() * 100 + '%';
+                    qMark.style.top = '-50px';
+                    qMark.style.fontSize = (Math.random() * 40 + 30) + 'px';
+                    qMark.style.color = rarity.color;
+                    qMark.style.opacity = '0.3';
+                    qMark.style.zIndex = '5';
+                    qMark.style.pointerEvents = 'none';
+                    qMark.textContent = questionMarks[Math.floor(Math.random() * questionMarks.length)];
+                    overlay.appendChild(qMark);
+
+                    // Animate falling
+                    qMark.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 0.3 },
+                        { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], { duration: 4000 + Math.random() * 2000, easing: 'ease-in' }).onfinish = () => qMark.remove();
+                }, 200);
+
+                // Slow flashes with question marks alternating
+                const flashSequence = [
+                    { type: 'flash', duration: 500 },
+                    { type: 'question', mark: '?', duration: 600 },
+                    { type: 'flash', duration: 500 },
+                    { type: 'question', mark: '⸮', duration: 600 },
+                    { type: 'flash', duration: 500 },
+                    { type: 'question', mark: '¿', duration: 600 },
+                    { type: 'flash', duration: 700 }
+                ];
+
+                for (let seq of flashSequence) {
+                    if (seq.type === 'flash') {
+                        flashScreen(overlay);
+                    } else {
+                        // Display question mark in center
+                        const qDisplay = document.createElement('div');
+                        qDisplay.style.position = 'absolute';
+                        qDisplay.style.left = '50%';
+                        qDisplay.style.top = '50%';
+                        qDisplay.style.transform = 'translate(-50%, -50%)';
+                        qDisplay.style.fontSize = '200px';
+                        qDisplay.style.color = rarity.color;
+                        qDisplay.style.fontWeight = '900';
+                        qDisplay.style.zIndex = '15';
+                        qDisplay.style.textShadow = `0 0 50px ${rarity.color}`;
+                        qDisplay.textContent = seq.mark;
+                        overlay.appendChild(qDisplay);
+
+                        await sleep(seq.duration);
+                        qDisplay.remove();
+                        continue;
+                    }
+                    await sleep(seq.duration);
+                }
+
+                // Heavy shake and effects
+                overlay.style.animation = 'heavyShake 1.5s cubic-bezier(.36,.07,.19,.97)';
+                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}66 0%, #000 80%)`;
+
+                createCSParticles(overlay, rarity.color, 400);
+                createCSRays(overlay, rarity.color);
+
+                await sleep(800);
+
+                // Stop the rain after admire time
+                let stopRainLater = setTimeout(() => {
+                    clearInterval(rainInterval);
+                }, 6000); // Stop after admire phase
+
+                // Store the interval ID so we can clear it on cleanup
+                overlay.rainInterval = rainInterval;
+                overlay.stopRainTimeout = stopRainLater;
+
+            } else if (isEpicTier) {
+                // === OTHER EPIC TIER SEQUENCE (ID 70+, but not 73) ===
+                // Star reaches center and slowly fades
+                star.animate([
+                    { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1 },
+                    { transform: 'translate(-50%, -50%) scale(1.2)', opacity: 0 }
+                ], { duration: 2000, fill: 'forwards', easing: 'ease-out' });
+
+                await sleep(2000);
+
+                // Triple Flash (dramatic reveal)
+                for (let i = 0; i < 3; i++) {
+                    flashScreen(overlay);
+                    await sleep(300);
+                }
+
+                // Intense particles and rays
+                createCSParticles(overlay, rarity.color, 400);
+                createCSRays(overlay, rarity.color);
+                
+                overlay.style.animation = 'heavyShake 1.5s cubic-bezier(.36,.07,.19,.97)';
+                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}66 0%, #000 80%)`;
+
+                await sleep(800);
+
+            } else if (t50) {
                 // Slow-mo phase for top tiers
                 star.animate([
                     { left: '30%', transform: 'translate(-50%, -50%) scale(1.5)' },
@@ -871,27 +1157,31 @@ function triggerRoll() {
                 // Distortion Flash
                 if (t45) flashScreen(overlay);
                 await sleep(500);
+
+                star.remove();
+                overlay.style.animation = 'heavyShake 1s cubic-bezier(.36,.07,.19,.97)';
+                
+                if (t45) {
+                    overlay.style.background = `radial-gradient(circle at center, ${rarity.color}44 0%, #000 80%)`;
+                }
+
+                createCSParticles(overlay, rarity.color, 250);
+
+                if (t50) {
+                    setTimeout(() => createCSParticles(overlay, '#ffffff', 150), 200);
+                }
+
+                if (t56) {
+                    createCSRays(overlay, rarity.color);
+                }
+
             } else if (t45) {
                 flashScreen(overlay);
-            }
-
-            // 3. Impact & Explosion
-            star.remove();
-            
-            overlay.style.animation = t56 ? 'heavyShake 1s cubic-bezier(.36,.07,.19,.97)' : 'shake 0.5s ease-out';
-            
-            if (t45) {
-                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}44 0%, #000 80%)`;
-            }
-
-            createCSParticles(overlay, rarity.color, t50 ? 250 : 100);
-
-            if (t50) {
-                setTimeout(() => createCSParticles(overlay, '#ffffff', 150), 200);
-            }
-
-            if (t56) {
-                createCSRays(overlay, rarity.color);
+                star.remove();
+                overlay.style.animation = 'shake 0.5s ease-out';
+                createCSParticles(overlay, rarity.color, 100);
+            } else {
+                star.remove();
             }
 
             // 4. Reveal Frame & Image
@@ -906,6 +1196,49 @@ function triggerRoll() {
             frame.appendChild(img);
             overlay.appendChild(frame);
 
+                        // Add halo for holy tier
+// Replace the halo creation section (after "// Add halo for holy tier"):
+if (isHolyTier) {
+    const halo = document.createElement('div');
+    halo.style.position = 'fixed';
+    halo.style.top = '50vh';
+    halo.style.left = '50vw';
+    halo.style.width = '450px';
+    halo.style.height = '450px';
+    halo.style.marginLeft = '-225px';
+    halo.style.marginTop = '-225px';
+    halo.style.border = '3px solid #ffee8b';
+    halo.style.borderRadius = '50%';
+    halo.style.boxShadow = '0 0 40px #ffee8b, inset 0 0 40px rgba(255, 238, 139, 0.3)';
+    halo.style.zIndex = '18';
+    halo.style.opacity = '0.8';
+    halo.style.animation = 'float 4s ease-in-out infinite';
+    halo.style.pointerEvents = 'none';
+    overlay.appendChild(halo);
+}
+
+            // Add demonic fire effect background for demonic tier
+            if (isDemonicTier) {
+                const fireBackdrop = document.createElement('div');
+                fireBackdrop.style.position = 'absolute';
+                fireBackdrop.style.top = '0';
+                fireBackdrop.style.left = '0';
+                fireBackdrop.style.width = '100%';
+                fireBackdrop.style.height = '100%';
+                fireBackdrop.style.background = 'radial-gradient(circle at center, rgba(255, 60, 67, 0.4) 0%, rgba(143, 3, 3, 0.2) 50%, #000 100%)';
+                fireBackdrop.style.zIndex = '17';
+                fireBackdrop.style.pointerEvents = 'none';
+                overlay.appendChild(fireBackdrop);
+
+                // Animate fire flicker
+                fireBackdrop.style.animation = 'none';
+                const flicker = setInterval(() => {
+                    fireBackdrop.style.opacity = (0.3 + Math.random() * 0.3).toString();
+                }, 150);
+                
+                overlay.fireFlickerInterval = flicker;
+            }
+
             // 5. Title Reveal
             const title = document.createElement('div');
             title.className = 'cs-title';
@@ -913,7 +1246,29 @@ function triggerRoll() {
             title.style.textShadow = `0 0 20px ${rarity.color}, 0 0 50px ${rarity.color}`;
             overlay.appendChild(title);
 
-            if (t56) {
+            if (isID87) {
+                // ID 73: special dramatic reveal
+                title.style.opacity = '1';
+                title.style.transform = 'translateY(0)';
+                await sleep(1000);
+                const chars = [...rarity.name];
+                for (let i = 0; i < chars.length; i++) {
+                    title.textContent += chars[i];
+                    await sleep(120);
+                }
+                title.style.animation = 'float 3s ease-in-out infinite alternate, rainbowShift 3s linear infinite';
+            } else if (isEpicTier) {
+                // Epic tier: dramatic letter-by-letter reveal
+                title.style.opacity = '1';
+                title.style.transform = 'translateY(0)';
+                await sleep(1000); // pause before text
+                const chars = [...rarity.name];
+                for (let i = 0; i < chars.length; i++) {
+                    title.textContent += chars[i];
+                    await sleep(100); // slightly slower typewriter speed
+                }
+                title.style.animation = 'float 3s ease-in-out infinite alternate, rainbowShift 3s linear infinite';
+            } else if (t56) {
                 // Dramatic Letter-by-Letter
                 title.style.opacity = '1';
                 title.style.transform = 'translateY(0)';
@@ -931,7 +1286,19 @@ function triggerRoll() {
             }
 
             // Admire phase
-            await sleep(t56 ? 5000 : 3500);
+            let admireTime = isID87 ? 6000 : (isEpicTier ? 6000 : (t56 ? 5000 : 3500));
+            await sleep(admireTime);
+
+            // Clean up ID 73 rain effects
+            if (isID87) {
+                if (overlay.rainInterval) clearInterval(overlay.rainInterval);
+                if (overlay.stopRainTimeout) clearTimeout(overlay.stopRainTimeout);
+            }
+
+                        // Clean up demonic fire flicker
+            if (isDemonicTier && overlay.fireFlickerInterval) {
+                clearInterval(overlay.fireFlickerInterval);
+            }
 
             // 6. Fade Out & Cleanup
             overlay.style.opacity = '0';
@@ -1120,10 +1487,42 @@ function buyPotion(type) {
         statusEffect = "chronobind";
     }
 
+    if (type === 11) {
+        cost = 1e26;
+        multiplier = 1000000;
+        duration = 240000;
+        name = "Eldtritch Sleep Brew";
+        statusEffect = "dead sleep";
+    }
+
+    if (type === 12) {
+        cost = 5e26;
+        multiplier = 5000000;
+        duration = 180000;
+        name = "Elixir of Vitrues";
+        statusEffect = "good samaritan";
+    }
+
+    if (type === 13) {
+        cost = 5e26;
+        multiplier = 5000000;
+        duration = 180000;
+        name = "Tonic of Sins";
+        statusEffect = "misanthropic mind";
+    }
+
+    if (type === 14) {
+        cost = 1e27;
+        multiplier = 10000000;
+        duration = 600000;
+        name = "Liquid of ???";
+        statusEffect = "???";
+    }
+
     if (state.points < cost) {
         showPopup(
             `You're broke. You need ${formatNumber(cost)} points.`,
-            "Ok",
+            "bruh",
             "Close",
             () => {}
         );
@@ -1135,7 +1534,7 @@ function buyPotion(type) {
             "Doing this will replace your current potion.",
             "I know",
             "Nevermind",
-            () => { if (State.points < cost) { completePotionPurchase(cost, multiplier, duration, name); } }
+            () => { if (state.points >= cost) { completePotionPurchase(cost, multiplier, duration, name); } }
         );
         return;
     }
@@ -1209,6 +1608,67 @@ if (statusEffect) {
 
     updateUI();
 }
+
+        // --- Prestige System ---
+        function calculatePrestigeBonus() {
+            // 100k rolls = +1x luck
+            return Math.round((state.totalRolls / 100000) * 10) / 10;
+        }
+
+        function triggerPrestige() {
+            const prestigeBonus = calculatePrestigeBonus();
+            
+            if (prestigeBonus <= 0) {
+                showPopup(
+                    `You need at least 100,000 total rolls to prestige.\nCurrent: ${formatNumber(state.totalRolls)}/100,000`,
+                    "Shucks",
+                    "Aw man",
+                    () => {}
+                );
+                return;
+            }
+
+            showPopup(
+                `Ready to Prestige?\n\nYou'll gain +${prestigeBonus}x permanent luck!\n\n(Your progress will reset, but the luck bonus stays forever)`,
+                "PRESTIGE",
+                "Cancel",
+                () => {
+                    completePrestige(prestigeBonus);
+                }
+            );
+        }
+
+        function completePrestige(bonus) {
+            const preservedName = state.playerName;            
+            // Reset all progress
+            state = {
+                version: SAVE_VERSION,
+                inventory: {},
+                rolls: 0,
+                points: 0,
+                luckLevel: 1,
+                luck: 1 + bonus, // Apply prestige bonus
+                pity: 0,
+                playerName: preservedName,
+                redeemedCodes: [],
+                prestigeCount: (state.prestigeCount || 0) + 1,
+                totalRolls: state.totalRolls
+            };
+
+            // Clear active potions
+            potionMultiplier = 1;
+            activePotionName = null;
+            activeStatusEffect = null;
+            potionEndTime = 0;
+            if (potionTimeout) clearTimeout(potionTimeout);
+            if (potionInterval) clearInterval(potionInterval);
+
+            saveData();
+            updateUI();
+            
+            showAnnouncement(`PRESTIGE! +${bonus}x Luck permanently unlocked!`, "#FFD700");
+        }
+
         // --- Global Announcements System ---
 let nextGlobalAnnounceTime = Date.now();
 let nextGlobalRarity = null;
@@ -1263,7 +1723,7 @@ function checkAndDisplayGlobalAnnounce() {
     if (Date.now() >= nextGlobalAnnounceTime) {
         // Time to announce!
         const fakeUsers = [
-        "Guest_1902", "Guest_2321", "Guest_1850", "Guest_1284", "ShadowNinja", "ShadowNigga", "RNG_God", "NoobSlayer99", "LuckyDuck", "LuckyFuck", "bumcracker67", "naperiggerson", "EFN", "ERN", "diddysbumhole", "wemby'slittletwink", "CP_WATCHER", "Ray_Piste", "Peter_File", "MrCoolJr", "MrCoolSr", "Drake's_Fat_Dick", "gothmommycracker", "NiggaBeater", "WSpeed_Editz", "ILoveMinors", "StrongestIsraeliSoldier", "IDF_bootlicker", "Big_Yahu", "Jewish_City_Boy", "i_have_scat_fetish", "piss_drinking_4ever", "sweatyArmpitLicker", "I_touch_boys", "GreenNiggaGreen", "buttholelicker", "i_love_littleGirls", "4yo_fucker", "PencilUpMyUrethra"
+        "Guest_1902", "Guest_2321", "Guest_1850", "Guest_1284", "ShadowNinja", "ShadowNigga", "RNG_God", "NoobSlayer99", "LuckyDuck", "LuckyFuck", "bumcracker67", "naperiggerson", "EFN", "ERN", "diddysbumhole", "wemby'slittletwink", "CP_WATCHER", "Ray_Piste", "Peter_File", "MrCoolJr", "MrCoolSr", "Drake's_Fat_Dick", "gothmommycracker", "NiggaBeater", "WSpeed_Editz", "ILoveMinors", "StrongestIsraeliSoldier", "IDF_bootlicker", "Big_Yahu", "Jewish_City_Boy", "i_have_scat_fetish", "piss_drinking_4ever", "sweatyArmpitLicker", "I_touch_boys", "GreenNiggaGreen", "buttholelicker", "i_love_littleGirls", "4yo_fucker", "PencilUpMyUrethra", "i_love_buttholes", "NiggaPooper4000", "67buttplugs_up_my_ass", "Liggy", "swerxl", "i_eat_poop", "PissDrinker67", "67_aura_buttkisser", "NIGGERNIGGERNIGGER", "epstien's_returning_customer", "ISpent67MilOnPornhub", "Child_Pornographer", "touchingLittleBoysRN", "littleGirls_littlePussy", "leniggler", "iPegBoys", "StrapOnDildo", "BiggestButtplug", "CornyMasterBaiter67", "bigbrolignezh"
         ];
         const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
         showAnnouncement(`[Global] ${user} rolled ${nextGlobalRarity.name}!`, nextGlobalRarity.color);
@@ -1282,7 +1742,8 @@ scheduleNextGlobalAnnounce();
         function updateUI(result) {
             const totalLuck = state.luck * potionMultiplier;
             document.getElementById('display-player-name').textContent = state.playerName;
-            document.getElementById('stat-total-rolls').textContent = formatNumber(state.rolls);
+            document.getElementById('stat-total-rolls').textContent = formatNumber(state.totalRolls);
+            document.getElementById('stat-rolls').textContent = formatNumber(state.rolls);
             document.getElementById('stat-points').textContent = formatNumber(state.points);
             document.getElementById("stat-luck").textContent = totalLuck.toFixed(2) + "x";            
             document.getElementById('pity-counter').textContent = state.pity;
@@ -1412,16 +1873,17 @@ scheduleNextGlobalAnnounce();
         function resetSave(forced = false) {
             const preservedName = state.playerName;
 
-            state = {
-                version: SAVE_VERSION,
-                inventory: {},
-                rolls: 0,
-                points: 0,
-                luckLevel: 1,
-                luck: 1,
-                pity: 0,
+            state = { 
+                inventory: {}, 
+                rolls: 0, 
+                points: 0, 
+                luckLevel: 1, 
+                luck: 1, 
+                pity: 0, 
                 playerName: preservedName,
-                redeemedCodes: []
+                redeemedCodes: [], 
+                prestigeCount: 0, 
+                totalRolls: 0
             };
 
             saveData();
@@ -1476,9 +1938,13 @@ scheduleNextGlobalAnnounce();
         document.getElementById("buy-potent-eclipse").addEventListener("click", () => buyPotion(8));
         document.getElementById("buy-potent-void").addEventListener("click", () => buyPotion(9));
         document.getElementById("buy-potent-chrono").addEventListener("click", () => buyPotion(10));
+        document.getElementById("buy-eldritch").addEventListener("click", () => buyPotion(11));
+        document.getElementById("buy-virtue").addEventListener("click", () => buyPotion(12));
+        document.getElementById("buy-sin").addEventListener("click", () => buyPotion(13));
+        document.getElementById("buy-unknown").addEventListener("click", () => buyPotion(14));
         document.getElementById('btn-save-name').addEventListener('click', () => {
             const input = document.getElementById('input-name').value.trim();
-            if (input.length > 0 && input.length <= 16) {
+            if (input.length > 0 && input.length <= 32) {
                 state.playerName = input; saveData(); updateUI();
                 const btn = document.getElementById('btn-save-name'); const origText = btn.textContent;
                 btn.textContent = "Saved!"; btn.style.background = "var(--accent)";
@@ -1506,7 +1972,7 @@ scheduleNextGlobalAnnounce();
         document.getElementById('btn-confirm-reset').addEventListener('click', () => {
         resetSave();
         });
-
+        document.getElementById('btn-prestige').addEventListener('click', triggerPrestige);
         // Initialize
         loadData();
 
