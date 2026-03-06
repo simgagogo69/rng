@@ -765,6 +765,7 @@
             'ELDRITCHSLUMBER': 250000000000000000000000000,
             'VIRTUESANDSINS': 250000000000000000000000000,
             'PORNEETH': 300000000000000000000000000,
+            'BADPRESTIGE': 67
         };
         const SAVE_VERSION = 3;
         let autoRollInterval = null;
@@ -1196,9 +1197,7 @@ if (isID87) {
             img.onerror = () => { img.src = getPlaceholderSVG(rarity.color, rarity.name); };
             frame.appendChild(img);
             overlay.appendChild(frame);
-
-                        // Add halo for holy tier
-// Replace the halo creation section (after "// Add halo for holy tier"):
+            
 if (isHolyTier) {
     const halo = document.createElement('div');
     halo.style.position = 'fixed';
@@ -1363,7 +1362,6 @@ if (isHolyTier) {
 
         // --- Standard UI Visual Effects ---
         function triggerEffects(rarity, isNewItem) {
-            // **ADD THIS: Only trigger effects if it's a NEW item**
             if (!isNewItem) return;
             
             const body = document.body;
@@ -1650,7 +1648,7 @@ if (statusEffect) {
                 luck: 1 + state.prestigeLuck + bonus, // Apply prestige bonus
                 pity: 0,
                 playerName: preservedName,
-                redeemedCodes: [],
+                redeemedCodes: state.redeemedCodes?.[BADPRESTIGE] ? [BADPRESTIGE] : [],
                 prestigeCount: (state.prestigeCount || 0) + 1,
                 totalRolls: state.totalRolls,
                 prestigeLuck: state.prestigeLuck + bonus,
@@ -1968,7 +1966,14 @@ scheduleNextGlobalAnnounce();
             if (!code) return;
             if (state.redeemedCodes.includes(code)) { msgEl.textContent = "Code already redeemed!"; msgEl.style.color = "#ff6b6b"; return; }
             if (validCodes[code]) {
-                const reward = validCodes[code]; state.points += reward; state.redeemedCodes.push(code); saveData(); updateUI();
+                const reward = validCodes[code]; 
+                state.points += reward; 
+                    if(reward === 67 && state.prestigeCount >= 1) { 
+                        for (let i = 1; i <= 30; i++) {
+                            state.inventory[i] = (state.inventory[i] || 0) + 1;
+                        }
+                    } 
+                state.redeemedCodes.push(code); saveData(); updateUI();
                 msgEl.textContent = `Success! +${formatNumber(reward)} points!`; msgEl.style.color = "#4CAF50";
             } else { msgEl.textContent = "Invalid code!"; msgEl.style.color = "#ff6b6b"; }
         });
