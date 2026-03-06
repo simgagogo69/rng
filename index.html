@@ -1648,7 +1648,7 @@ if (statusEffect) {
                 luck: 1 + state.prestigeLuck + bonus, // Apply prestige bonus
                 pity: 0,
                 playerName: preservedName,
-                redeemedCodes: state.redeemedCodes?.[BADPRESTIGE] ? [BADPRESTIGE] : [],
+                redeemedCodes: state.redeemedCodes?.['BADPRESTIGE'] ? ['BADPRESTIGE'] : [],
                 prestigeCount: (state.prestigeCount || 0) + 1,
                 totalRolls: state.totalRolls,
                 prestigeLuck: state.prestigeLuck + bonus,
