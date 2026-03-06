@@ -1747,7 +1747,8 @@ scheduleNextGlobalAnnounce();
             document.getElementById('stat-total-rolls').textContent = formatNumber(state.totalRolls);
             document.getElementById('stat-rolls').textContent = formatNumber(state.rolls);
             document.getElementById('stat-points').textContent = formatNumber(state.points);
-            document.getElementById("stat-luck").textContent = totalLuck.toFixed(2) + "x";            
+            document.getElementById("stat-luck").textContent = totalLuck.toFixed(2) + "x";  
+            document.getElementById('stat-prestige').textContent = formatNumber(state.prestigeCount)        
             document.getElementById('pity-counter').textContent = state.pity;
 
             if (result) {
