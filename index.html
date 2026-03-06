@@ -1869,7 +1869,7 @@ scheduleNextGlobalAnnounce();
                 saveData();
             }
             if (state.prestigeCount === 0) {
-                totalRolls = rolls;
+                state.totalRolls = state.rolls;
             }
             updateUI();
         }
