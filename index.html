@@ -1619,9 +1619,9 @@ if (statusEffect) {
         function triggerPrestige() {
             const prestigeBonus = calculatePrestigeBonus();
             
-            if (prestigeBonus <= 0) {
+            if (prestigeBonus <= 1) {
                 showPopup(
-                    `You need at least 100,000 total rolls to prestige.\nCurrent: ${formatNumber(state.rolls)}/100,000`,
+                    `You need at least 100,000 total rolls to prestige.\nCurrent: ${formatNumber(state.rolls)}/100k`,
                     "Shucks",
                     "Aw man",
                     () => {}
@@ -1644,9 +1644,10 @@ if (statusEffect) {
             // Reset all progress
             state = {
                 version: SAVE_VERSION,
-                rolls: 0,
-                points: 0,
-                luckLevel: 1,
+                inventory: {}, 
+                rolls: 0, 
+                points: 0, 
+                luckLevel: 1, 
                 luck: 1 + state.prestigeLuck + bonus, // Apply prestige bonus
                 pity: 0,
                 playerName: preservedName,
@@ -1665,7 +1666,7 @@ if (statusEffect) {
             if (potionInterval) clearInterval(potionInterval);
 
             saveData();
-            updateUI();
+            location.reload();
             
             showAnnouncement(`PRESTIGE! +${bonus}x Luck permanently unlocked!`, "#FFD700");
         }
@@ -1922,7 +1923,7 @@ scheduleNextGlobalAnnounce();
         document.getElementById('btn-upgrade').addEventListener('click', () => {
             const cost = getUpgradeCost();
             if (state.points >= cost) {
-                state.points -= cost; state.luck += 1 + (state.luckLevel * 0.25);; state.luckLevel += 1; saveData(); updateUI();
+                state.points -= cost; state.luck += ((1 + (state.luckLevel * 0.25)) * state.prestigeLuck || 0); state.luckLevel += 1; saveData(); updateUI();
                 const btn = document.getElementById('btn-upgrade');
                 btn.textContent = "UPGRADED!"; btn.style.background = "var(--accent)";
                 setTimeout(() => { btn.style.background = ""; updateUI(); }, 500);
