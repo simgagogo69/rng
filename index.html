@@ -37,7 +37,6 @@
             transition: filter 0.2s, transform 0.1s;
         }
 
-        /* --- Animations & Effects --- */
         @keyframes shake {
             0%, 100% { transform: translate(0, 0) rotate(0); }
             25% { transform: translate(-5px, 5px) rotate(-1deg); }
@@ -94,7 +93,6 @@
         .heavy-shake-active { animation: heavyShake 0.6s cubic-bezier(.36,.07,.19,.97) both; }
         .flash-active { animation: flash 0.5s ease-out; }
 
-        /* --- Particles --- */
         .particle {
             position: absolute;
             pointer-events: none;
@@ -102,7 +100,6 @@
             z-index: 100;
         }
 
-        /* --- Layout --- */
         header {
             padding: 1rem 2rem;
             display: flex;
@@ -120,7 +117,6 @@
 
         main { display: flex; flex: 1; overflow: hidden; }
 
-        /* --- Left: Roll Area --- */
         #roll-section {
             flex: 1;
             display: flex;
@@ -180,7 +176,6 @@
         }
         .btn-upgrade:hover { background: rgba(255,255,255,0.1); }
 
-        /* --- Right: Inventory Area --- */
         #inventory-section { width: 450px; background: rgba(0,0,0,0.4); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .inv-header { padding: 1.5rem; border-bottom: 1px solid var(--border-color); }
         .progress-bar-bg { width: 100%; height: 10px; background: var(--panel-bg); border-radius: 5px; margin-top: 0.5rem; overflow: hidden; }
@@ -219,7 +214,6 @@
             #rolled-name { font-size: 1.8rem; }
         }
 
-        /* --- Dynamic Effect Classes --- */
         .efx-1 { text-shadow: none; }
         .efx-2 { text-shadow: 0 0 10px currentColor; }
         .efx-3 { text-shadow: 0 0 20px currentColor, 0 0 40px currentColor; animation: float 3s ease-in-out infinite; }
@@ -245,7 +239,6 @@
             border-radius: 5px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 500; font-size: 0.9rem; white-space: nowrap;
         }
 
-        /* Modal Styles */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
             display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
@@ -263,7 +256,6 @@
         #inspect-name { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; letter-spacing: 2px; text-align: center; }
         .inspect-detail { color: var(--text-muted); font-size: 1.1rem; margin-top: 0.5rem; }
 
-        /* Settings Styles */
         .settings-section { width: 100%; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
         .settings-section label { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
         .settings-section input {
@@ -274,13 +266,12 @@
         .btn-settings-icon { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s, transform 0.2s; }
         .btn-settings-icon:hover { color: white; transform: rotate(45deg); }
 
-        /* --- Cinematic Cutscene Engine Styles --- */
         #cutscene-layer {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; z-index: 9999;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; transition: opacity 0.5s ease;
-            pointer-events: all; /* Block clicks completely */
+            pointer-events: all; 
             overflow: hidden;
         }
 
@@ -351,7 +342,7 @@
     background: rgba(255,255,255,0.3);
     border-radius: 6px;
 }
-/* ===== Global Potion HUD (Top Left) ===== */
+
 #game-potion-ui {
     position: fixed;
     top: 100px;
@@ -647,7 +638,6 @@
     </div>
 </div>
     <script>
-        // --- Core Data: 60 Rarities (Scaling to Nonillions) ---
         const rarities = [
             { id: 1, name: "Common", img: "common", odds: 2, color: "#A0A0A0", effect: 1, val: 1 },
             { id: 2, name: "Uncommon", img: "uncommon", odds: 3, color: "#4CAF50", effect: 1, val: 2 },
@@ -737,7 +727,6 @@
             { id: 86, name: "《 ⟢ 𝐒𝐔𝐏𝐄𝐑𝐁𝐈𝐀 ⟣ 》", img: "superbia", odds: 1e17, color: "#995479", effect: 7, val: 5e27, requiredStatus: "misanthropic mind"},
             { id: 87, name: "¿⸮? 𝕀  𝔻 𝕆 ℕ ' 𝕋  𝕂 ℕ 𝕆 𝕎 ?⸮¿", img: "unknown", odds: 1e18, colour: "???", effect: 7, val: 1e29, requiredStatus: "???"},
         ];
-        // --- Potions---
         let potionMultiplier = 1;
         let potionEndTime = 0;
         let potionInterval = null;
@@ -753,7 +742,6 @@
             "misanthropic mind": "#d52b00",
             "???": "#ffffff",
         };
-        // --- Game State ---
         let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0, prestigeLuck: 0 };
         const validCodes = {
             'RELEASE': 1000,
@@ -773,7 +761,6 @@
         let autoRollInterval = null;
         let isPlayingCutscene = false;
 
-        // --- Game Popup System ---
         const popup = document.getElementById("game-popup");
         const popupMsg = document.getElementById("popup-message");
         const popupConfirm = document.getElementById("popup-confirm");
@@ -795,7 +782,6 @@
                 popup.classList.remove("active");
             };
         }
-        // --- Utility ---
         function formatNumber(num) {
             if (num < 1000) return Math.floor(num).toString();
             const map = [
@@ -828,7 +814,19 @@
 
         const sleep = ms => new Promise(res => setTimeout(res, ms));
 
-        // --- Cached DOM References (avoid re-querying every roll) ---
+        let _uiPending = false;
+        let _lastUIResult = null;
+        function scheduleUI(result) {
+            _lastUIResult = result;
+            if (!_uiPending) {
+                _uiPending = true;
+                requestAnimationFrame(() => {
+                    updateUI(_lastUIResult);
+                    _uiPending = false;
+                });
+            }
+        }
+
         const DOM = {};
         function initDOM() {
             DOM.playerName   = document.getElementById('display-player-name');
@@ -848,7 +846,6 @@
             DOM.highestText  = document.getElementById('highest-text');
         }
 
-        // --- Throttled Save (write at most once every 2 seconds) ---
         let _savePending = false;
         function saveData() {
             state.version = SAVE_VERSION;
@@ -861,30 +858,22 @@
             }
         }
         function saveDataNow() {
-            // Immediate save for critical moments (prestige, reset, name change)
             state.version = SAVE_VERSION;
             _savePending = false;
             localStorage.setItem('absRngSave', JSON.stringify(state));
         }
 
-        // --- Core Mechanics ---
         function calculateRNG() {
             const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.02));
             const currentLuck = (state.luck * potionMultiplier) * pityMulti;
             
             const availableRarities = rarities.filter(r => {
-                // If item requires a status, it must match the active status
                 if (r.requiredStatus) {
                     return r.requiredStatus === activeStatusEffect;
                 }
-                // Items with no required status are always available
                 return true;
             });
 
-            // Each item gets its own independent roll so same-odds items
-            // (e.g. all Good Samaritan / Misanthropic Mind rarities) have
-            // equal probability of being selected instead of the last one
-            // in the array always winning.
             for (let i = availableRarities.length - 1; i >= 0; i--) {
                 const chance = (1 / availableRarities[i].odds) * currentLuck;
                 if (Math.random() <= chance) return availableRarities[i];
@@ -896,11 +885,8 @@ function triggerRoll() {
     if (isPlayingCutscene) return;
     
     const result = calculateRNG();
-
-    // Check if item is NEW (first time getting it)
     const isNewItem = !state.inventory[result.id] || state.inventory[result.id] === 0;
 
-    // Backend processing
     state.rolls++;
     state.totalRolls++;
     const highestId = Math.max(0, ...Object.keys(state.inventory).map(Number));
@@ -910,12 +896,11 @@ function triggerRoll() {
     state.inventory[result.id] = (state.inventory[result.id] || 0) + 1;
     saveData();
 
-    // Handle Cutscene or Standard Display
     if (isNewItem && result.id >= 31) {
         playCutscene(result);
     } else {
-        updateUI(result);
-        triggerEffects(result, isNewItem);  // **PASS isNewItem HERE**
+        scheduleUI(result);
+        triggerEffects(result, isNewItem); 
         animateStandardRoll();
     }
 }
@@ -924,28 +909,24 @@ function triggerRoll() {
             const imgEl = document.getElementById('rolled-image');
             const nameEl = document.getElementById('rolled-name');
             imgEl.style.animation = 'none'; nameEl.style.animation = 'none';
-            void imgEl.offsetWidth; // trigger reflow
+            void imgEl.offsetWidth; 
             imgEl.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
             nameEl.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both';
         }
 
-         // --- Cinematic Cutscene Engine ---
         async function playCutscene(rarity) {
             isPlayingCutscene = true;
             
-            // Pause auto-roll & disable UI
             const autoBtn = document.getElementById('toggle-auto');
             const wasAutoRolling = autoBtn.checked;
             if (autoRollInterval) { clearInterval(autoRollInterval); autoRollInterval = null; }
             document.getElementById('btn-roll').disabled = true;
             autoBtn.disabled = true;
 
-            // Setup Overlay
             const overlay = document.createElement('div');
             overlay.id = 'cutscene-layer';
             document.body.appendChild(overlay);
 
-            // Tier Evaluation for Escalation
             const tId = rarity.id;
             const isHolyTier = tId >= 73 && tId <= 79;
             const isDemonicTier = tId >= 80 && tId <= 86;
@@ -955,12 +936,10 @@ function triggerRoll() {
             const t50 = tId >= 50;
             const t56 = tId >= 56;
 
-            // 1. Fade to Black
             await sleep(50);
             overlay.style.opacity = '1';
             await sleep(600);
 
-            // 2. Star Sequence
             const star = document.createElement('div');
             star.className = 'cs-star';
             star.style.boxShadow = `0 0 30px 10px ${rarity.color}`;
@@ -974,16 +953,13 @@ function triggerRoll() {
                 { left: targetX, transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1 }
             ], { duration: buildupTime, fill: 'forwards', easing: 'ease-in' });
 
-// Add holy trail for holy tier
 if (isHolyTier) {
     let trailInterval = setInterval(() => {
-        // Get actual star position from DOM
         const starRect = star.getBoundingClientRect();
         const overlayRect = overlay.getBoundingClientRect();
         const starScreenX = starRect.left - overlayRect.left + starRect.width / 2;
         const starScreenY = starRect.top - overlayRect.top + starRect.height / 2;
         
-        // Convert to percentage for overlay
         const starPercentX = (starScreenX / overlayRect.width) * 100;
         
         const trail = document.createElement('div');
@@ -1008,16 +984,13 @@ if (isHolyTier) {
     setTimeout(() => clearInterval(trailInterval), buildupTime);
 }
 
-// Add demonic fire trail for demonic tier
 if (isDemonicTier) {
     let fireInterval = setInterval(() => {
-        // Get actual star position from DOM
         const starRect = star.getBoundingClientRect();
         const overlayRect = overlay.getBoundingClientRect();
         const starScreenX = starRect.left - overlayRect.left + starRect.width / 2;
         const starScreenY = starRect.top - overlayRect.top + starRect.height / 2;
         
-        // Convert to percentage for overlay
         const starPercentX = (starScreenX / overlayRect.width) * 100;
         
         const fire = document.createElement('div');
@@ -1042,18 +1015,15 @@ if (isDemonicTier) {
     setTimeout(() => clearInterval(fireInterval), buildupTime);
 }
 
-// Add question mark trail for ID 87
 if (isID87) {
     const questionMarks = ['?', '⸮', '¿'];
     let qMarkIndex = 0;
     let qTrailInterval = setInterval(() => {
-        // Get actual star position from DOM
         const starRect = star.getBoundingClientRect();
         const overlayRect = overlay.getBoundingClientRect();
         const starScreenX = starRect.left - overlayRect.left + starRect.width / 2;
         const starScreenY = starRect.top - overlayRect.top + starRect.height / 2;
         
-        // Convert to percentage for overlay
         const starPercentX = (starScreenX / overlayRect.width) * 100;
         const starPercentY = (starScreenY / overlayRect.height) * 100;
         
@@ -1077,7 +1047,7 @@ if (isID87) {
     }, 100);
     
     setTimeout(() => clearInterval(qTrailInterval), buildupTime);
-    overlay.qTrailInterval = qTrailInterval; // Store for cleanup if needed
+    overlay.qTrailInterval = qTrailInterval; 
 }
 
             await sleep(buildupTime);
@@ -1090,7 +1060,6 @@ if (isID87) {
 
                 await sleep(3000);
 
-                // Start question mark rain in background
                 const questionMarks = ['?', '⸮', '¿'];
                 let rainInterval = setInterval(() => {
                     const qMark = document.createElement('div');
@@ -1105,14 +1074,12 @@ if (isID87) {
                     qMark.textContent = questionMarks[Math.floor(Math.random() * questionMarks.length)];
                     overlay.appendChild(qMark);
 
-                    // Animate falling
                     qMark.animate([
                         { transform: 'translateY(0) rotate(0deg)', opacity: 0.3 },
                         { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
                     ], { duration: 4000 + Math.random() * 2000, easing: 'ease-in' }).onfinish = () => qMark.remove();
                 }, 200);
 
-                // Slow flashes with question marks alternating
                 const flashSequence = [
                     { type: 'flash', duration: 500 },
                     { type: 'question', mark: '?', duration: 600 },
@@ -1127,7 +1094,6 @@ if (isID87) {
                     if (seq.type === 'flash') {
                         flashScreen(overlay);
                     } else {
-                        // Display question mark in center
                         const qDisplay = document.createElement('div');
                         qDisplay.style.position = 'absolute';
                         qDisplay.style.left = '50%';
@@ -1148,7 +1114,6 @@ if (isID87) {
                     await sleep(seq.duration);
                 }
 
-                // Heavy shake and effects
                 overlay.style.animation = 'heavyShake 1.5s cubic-bezier(.36,.07,.19,.97)';
                 overlay.style.background = `radial-gradient(circle at center, ${rarity.color}66 0%, #000 80%)`;
 
@@ -1157,18 +1122,14 @@ if (isID87) {
 
                 await sleep(800);
 
-                // Stop the rain after admire time
                 let stopRainLater = setTimeout(() => {
                     clearInterval(rainInterval);
-                }, 6000); // Stop after admire phase
+                }, 6000); 
 
-                // Store the interval ID so we can clear it on cleanup
                 overlay.rainInterval = rainInterval;
                 overlay.stopRainTimeout = stopRainLater;
 
             } else if (isEpicTier) {
-                // === OTHER EPIC TIER SEQUENCE (ID 70+, but not 73) ===
-                // Star reaches center and slowly fades
                 star.animate([
                     { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1 },
                     { transform: 'translate(-50%, -50%) scale(1.2)', opacity: 0 }
@@ -1176,13 +1137,11 @@ if (isID87) {
 
                 await sleep(2000);
 
-                // Triple Flash (dramatic reveal)
                 for (let i = 0; i < 3; i++) {
                     flashScreen(overlay);
                     await sleep(300);
                 }
 
-                // Intense particles and rays
                 createCSParticles(overlay, rarity.color, 400);
                 createCSRays(overlay, rarity.color);
                 
@@ -1192,7 +1151,6 @@ if (isID87) {
                 await sleep(800);
 
             } else if (t50) {
-                // Slow-mo phase for top tiers
                 star.animate([
                     { left: '30%', transform: 'translate(-50%, -50%) scale(1.5)' },
                     { left: '50%', transform: 'translate(-50%, -50%) scale(2.5)' }
@@ -1200,7 +1158,6 @@ if (isID87) {
 
                 await sleep(1000);
                 
-                // Distortion Flash
                 if (t45) flashScreen(overlay);
                 await sleep(500);
 
@@ -1230,7 +1187,6 @@ if (isID87) {
                 star.remove();
             }
 
-            // 4. Reveal Frame & Image
             const frame = document.createElement('div');
             frame.className = 'cs-frame';
             frame.style.borderColor = rarity.color;
@@ -1261,7 +1217,6 @@ if (isHolyTier) {
     overlay.appendChild(halo);
 }
 
-            // Add demonic fire effect background for demonic tier
             if (isDemonicTier) {
                 const fireBackdrop = document.createElement('div');
                 fireBackdrop.style.position = 'absolute';
@@ -1274,7 +1229,6 @@ if (isHolyTier) {
                 fireBackdrop.style.pointerEvents = 'none';
                 overlay.appendChild(fireBackdrop);
 
-                // Animate fire flicker
                 fireBackdrop.style.animation = 'none';
                 const flicker = setInterval(() => {
                     fireBackdrop.style.opacity = (0.3 + Math.random() * 0.3).toString();
@@ -1283,7 +1237,6 @@ if (isHolyTier) {
                 overlay.fireFlickerInterval = flicker;
             }
 
-            // 5. Title Reveal
             const title = document.createElement('div');
             title.className = 'cs-title';
             title.style.color = rarity.color;
@@ -1291,7 +1244,6 @@ if (isHolyTier) {
             overlay.appendChild(title);
 
             if (isID87) {
-                // ID 73: special dramatic reveal
                 title.style.opacity = '1';
                 title.style.transform = 'translateY(0)';
                 await sleep(1000);
@@ -1302,25 +1254,23 @@ if (isHolyTier) {
                 }
                 title.style.animation = 'float 3s ease-in-out infinite alternate, rainbowShift 3s linear infinite';
             } else if (isEpicTier) {
-                // Epic tier: dramatic letter-by-letter reveal
                 title.style.opacity = '1';
                 title.style.transform = 'translateY(0)';
-                await sleep(1000); // pause before text
+                await sleep(1000); 
                 const chars = [...rarity.name];
                 for (let i = 0; i < chars.length; i++) {
                     title.textContent += chars[i];
-                    await sleep(100); // slightly slower typewriter speed
+                    await sleep(100);
                 }
                 title.style.animation = 'float 3s ease-in-out infinite alternate, rainbowShift 3s linear infinite';
             } else if (t56) {
-                // Dramatic Letter-by-Letter
                 title.style.opacity = '1';
                 title.style.transform = 'translateY(0)';
-                await sleep(800); // pause before text
+                await sleep(800); 
                 const chars = [...rarity.name];
                 for (let i = 0; i < chars.length; i++) {
                     title.textContent += chars[i];
-                    await sleep(80); // typewriter speed
+                    await sleep(80); 
                 }
                 title.style.animation = 'float 3s ease-in-out infinite alternate';
             } else {
@@ -1329,28 +1279,23 @@ if (isHolyTier) {
                 title.style.animationDelay = '0s, 0.6s';
             }
 
-            // Admire phase
             let admireTime = isID87 ? 6000 : (isEpicTier ? 6000 : (t56 ? 5000 : 3500));
             await sleep(admireTime);
 
-            // Clean up ID 73 rain effects
             if (isID87) {
                 if (overlay.rainInterval) clearInterval(overlay.rainInterval);
                 if (overlay.stopRainTimeout) clearTimeout(overlay.stopRainTimeout);
             }
 
-                        // Clean up demonic fire flicker
             if (isDemonicTier && overlay.fireFlickerInterval) {
                 clearInterval(overlay.fireFlickerInterval);
             }
 
-            // 6. Fade Out & Cleanup
             overlay.style.opacity = '0';
             await sleep(600);
             overlay.remove();
 
-            // 7. Resume Standard Game State
-            updateUI(rarity); // Update main board so player sees the roll there too
+            updateUI(rarity); 
             
             isPlayingCutscene = false;
             document.getElementById('btn-roll').disabled = false;
@@ -1361,7 +1306,6 @@ if (isHolyTier) {
             }
         }
 
-        // --- Cutscene Helpers ---
         function flashScreen(parent) {
             const f = document.createElement('div');
             f.className = 'cs-flash';
@@ -1404,7 +1348,6 @@ if (isHolyTier) {
             }
         }
 
-        // --- Standard UI Visual Effects ---
         function triggerEffects(rarity, isNewItem) {
             if (!isNewItem) return;
             
@@ -1592,7 +1535,6 @@ function completePotionPurchase(cost, multiplier, duration, name) {
 }
 function activatePotion(multiplier, duration, name, statusEffect = null) {
 
-    // Always clear old timers
     if (potionTimeout) clearTimeout(potionTimeout);
     if (potionInterval) clearInterval(potionInterval);
 
@@ -1628,7 +1570,6 @@ if (statusEffect) {
     label.textContent = name;
 }
 
-    // Animate countdown
     potionInterval = setInterval(() => {
         const remaining = potionEndTime - Date.now();
         const percent = Math.max(0, (remaining / duration) * 100);
@@ -1652,9 +1593,7 @@ if (statusEffect) {
     updateUI();
 }
 
-        // --- Prestige System ---
         function calculatePrestigeBonus() {
-            // 100k rolls = +1x luck
             return Math.round((state.rolls / 100000) * 10) / 10;
         }
 
@@ -1683,14 +1622,13 @@ if (statusEffect) {
 
         function completePrestige(bonus) {
             const preservedName = state.playerName;
-            // Reset all progress
             state = {
                 version: SAVE_VERSION,
                 inventory: {}, 
                 rolls: 0, 
                 points: 0, 
                 luckLevel: 1, 
-                luck: 1 + state.prestigeLuck + bonus, // Apply prestige bonus
+                luck: 1 + state.prestigeLuck + bonus, 
                 pity: 0,
                 playerName: preservedName,
                 redeemedCodes: state.redeemedCodes?.['BADPRESTIGE'] ? ['BADPRESTIGE'] : [],
@@ -1699,7 +1637,6 @@ if (statusEffect) {
                 prestigeLuck: state.prestigeLuck + bonus,
             };
 
-            // Clear active potions
             potionMultiplier = 1;
             activePotionName = null;
             activeStatusEffect = null;
@@ -1712,17 +1649,14 @@ if (statusEffect) {
 
         }
 
-        // --- Global Announcements System ---
 let nextGlobalAnnounceTime = Date.now();
 let nextGlobalRarity = null;
 
 function pickRandomRarity() {
-    // Only allow tiers 25+
     const eligibleRarities = rarities.filter(r => r.id >= 25);
 
     if (eligibleRarities.length === 0) return null;
 
-    // Bias toward lower of the eligible tiers (so 25–30 appear more than 55–60)
     const randomVal = Math.random();
     const rarityIndex = Math.floor(Math.pow(randomVal, 2.2) * eligibleRarities.length);
 
@@ -1730,28 +1664,23 @@ function pickRandomRarity() {
 }
 
 function calculateWaitTime(rarity) {
-    const minWait = 4000;   // 4 sec minimum
-    const maxWait = 20000;  // 20 sec max
+    const minWait = 4000;
+    const maxWait = 20000;
     
-    const rarityFactor = rarity.id / rarities.length; // 0 → 1
-    
-    // Higher rarity = longer wait
+    const rarityFactor = rarity.id / rarities.length; 
     const baseWait = minWait + (rarityFactor * (maxWait - minWait));
-    
-    const randomVariation = (Math.random() - 0.5) * 4000; // ±2 sec
+    const randomVariation = (Math.random() - 0.5) * 4000; 
     
     return Math.max(minWait, baseWait + randomVariation);
 }
 
 function scheduleNextGlobalAnnounce() {
-    // 5% chance of "skip event" - announce immediately with random rarity
     if (Math.random() < 0.05) {
-        nextGlobalAnnounceTime = Date.now() + 1000; // 1 second from now
+        nextGlobalAnnounceTime = Date.now() + 1000; 
         nextGlobalRarity = pickRandomRarity();
         return;
     }
     
-    // Normal: pick a rarity and calculate wait time
     nextGlobalRarity = pickRandomRarity();
     const waitTime = calculateWaitTime(nextGlobalRarity);
     nextGlobalAnnounceTime = Date.now() + waitTime;
@@ -1764,24 +1693,19 @@ function checkAndDisplayGlobalAnnounce() {
     }
     
     if (Date.now() >= nextGlobalAnnounceTime) {
-        // Time to announce!
         const fakeUsers = [
         "Guest_1902", "Guest_2321", "Guest_1850", "Guest_1284", "ShadowNinja", "ShadowNigga", "RNG_God", "NoobSlayer99", "LuckyDuck", "LuckyFuck", "bumcracker67", "naperiggerson", "EFN", "ERN", "diddysbumhole", "wemby'slittletwink", "CP_WATCHER", "Ray_Piste", "Peter_File", "MrCoolJr", "MrCoolSr", "Drake's_Fat_Dick", "gothmommycracker", "NiggaBeater", "WSpeed_Editz", "ILoveMinors", "StrongestIsraeliSoldier", "IDF_bootlicker", "Big_Yahu", "Jewish_City_Boy", "i_have_scat_fetish", "piss_drinking_4ever", "sweatyArmpitLicker", "I_touch_boys", "GreenNiggaGreen", "buttholelicker", "i_love_littleGirls", "4yo_fucker", "PencilUpMyUrethra", "i_love_buttholes", "NiggaPooper4000", "67buttplugs_up_my_ass", "Liggy", "swerxl", "i_eat_poop", "PissDrinker67", "67_aura_buttkisser", "NIGGERNIGGERNIGGER", "epstien's_returning_customer", "ISpent67MilOnPornhub", "Child_Pornographer", "touchingLittleBoysRN", "littleGirls_littlePussy", "leniggler", "iPegBoys", "StrapOnDildo", "BiggestButtplug", "CornyMasterBaiter67", "bigbrolignezh"
         ];
         const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
         showAnnouncement(`[Global] ${user} rolled ${nextGlobalRarity.name}!`, nextGlobalRarity.color);
         
-        // Schedule next announce
         scheduleNextGlobalAnnounce();
     }
 }
 
-// Check every 500ms for announcements
 setInterval(checkAndDisplayGlobalAnnounce, 500);
-
-// Initialize first announcement
 scheduleNextGlobalAnnounce();
-        // --- UI Updates ---
+
         function updateUI(result) {
             const totalLuck = state.luck * potionMultiplier;
             DOM.playerName.textContent  = state.playerName;
@@ -1823,7 +1747,6 @@ scheduleNextGlobalAnnounce();
                 let el = grid.querySelector(`[data-rarity-id="${r.id}"]`);
 
                 if (!el) {
-                    // First time: create the element
                     el = document.createElement('div');
                     el.dataset.rarityId = r.id;
                     el.className = `inv-item ${isUnlocked ? '' : 'locked'}`;
@@ -1846,18 +1769,14 @@ scheduleNextGlobalAnnounce();
                     }
                     grid.appendChild(el);
                 } else {
-                    // Already exists — only patch what changed
                     const wasLocked = el.classList.contains('locked');
 
                     if (!wasLocked && isUnlocked) {
-                        // Just update the count badge
                         const badge = el.querySelector('.item-count');
                         if (badge) badge.textContent = count > 999 ? '999+' : formatNumber(count);
-                        // Refresh tooltip closure value
                         el.onmouseenter = (e) => showTooltip(e, r, count);
                         el.addEventListener('click', () => openInspect(r, state.inventory[r.id] || 0));
                     } else if (wasLocked && isUnlocked) {
-                        // Just unlocked! Rebuild this one element only
                         el.className = 'inv-item';
                         el.style.borderColor = r.color;
                         el.style.boxShadow = `inset 0 0 10px rgba(${hexToRgb(r.color)}, 0.2)`;
@@ -1894,7 +1813,6 @@ scheduleNextGlobalAnnounce();
         function moveTooltip(e) { tooltip.style.left = e.pageX + 15 + 'px'; tooltip.style.top = e.pageY + 15 + 'px'; }
         function hideTooltip() { tooltip.style.opacity = 0; }
 
-        // --- Inspect Modal Logic ---
         const modal = document.getElementById('inspect-modal');
         function openInspect(rarity, count) {
             document.getElementById('inspect-image').src = `images/${getFilename(rarity)}.png`;
@@ -1918,7 +1836,6 @@ scheduleNextGlobalAnnounce();
             return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255,255,255';
         }
 
-        // --- Save / Load ---
         function saveData() { 
             state.version = SAVE_VERSION; 
             localStorage.setItem('absRngSave', JSON.stringify(state)); 
@@ -1930,7 +1847,7 @@ scheduleNextGlobalAnnounce();
                     const parsed = JSON.parse(saved);
                     if (!parsed.version || parsed.version !== SAVE_VERSION) {
                         console.log("Save version mismatch. Forcing reset.");
-                        resetSave(true); // true = forced reset
+                        resetSave(true); 
                         return;
                     }
                     state = { ...state, ...parsed };
@@ -1977,12 +1894,11 @@ scheduleNextGlobalAnnounce();
             location.reload();
         }
 
-        // --- Event Listeners ---
         document.getElementById('btn-roll').addEventListener('click', triggerRoll);
 
         document.getElementById('toggle-auto').addEventListener('change', (e) => {
             if (e.target.checked) {
-                if (isPlayingCutscene) return; // Wait until done
+                if (isPlayingCutscene) return;
                 triggerRoll();
                 if(!isPlayingCutscene) autoRollInterval = setInterval(triggerRoll, 1000);
             } else {
@@ -2001,7 +1917,6 @@ scheduleNextGlobalAnnounce();
             }
         });
 
-        // --- Settings Menu Listeners ---
         const settingsModal = document.getElementById('settings-modal');
         document.getElementById('btn-settings').addEventListener('click', () => {
             document.getElementById('input-name').value = state.playerName;
@@ -2062,7 +1977,6 @@ scheduleNextGlobalAnnounce();
         resetSave();
         });
         document.getElementById('btn-prestige').addEventListener('click', triggerPrestige);
-        // Initialize
         initDOM();
         loadData();
 
