@@ -828,6 +828,45 @@
 
         const sleep = ms => new Promise(res => setTimeout(res, ms));
 
+        // --- Cached DOM References (avoid re-querying every roll) ---
+        const DOM = {};
+        function initDOM() {
+            DOM.playerName   = document.getElementById('display-player-name');
+            DOM.totalRolls   = document.getElementById('stat-total-rolls');
+            DOM.rolls        = document.getElementById('stat-rolls');
+            DOM.points       = document.getElementById('stat-points');
+            DOM.luck         = document.getElementById('stat-luck');
+            DOM.prestige     = document.getElementById('stat-prestige');
+            DOM.pity         = document.getElementById('pity-counter');
+            DOM.rolledImage  = document.getElementById('rolled-image');
+            DOM.rolledName   = document.getElementById('rolled-name');
+            DOM.rolledOdds   = document.getElementById('rolled-odds');
+            DOM.btnUpgrade   = document.getElementById('btn-upgrade');
+            DOM.invGrid      = document.getElementById('inventory-grid');
+            DOM.progressText = document.getElementById('progress-text');
+            DOM.progressBar  = document.getElementById('progress-bar');
+            DOM.highestText  = document.getElementById('highest-text');
+        }
+
+        // --- Throttled Save (write at most once every 2 seconds) ---
+        let _savePending = false;
+        function saveData() {
+            state.version = SAVE_VERSION;
+            if (!_savePending) {
+                _savePending = true;
+                setTimeout(() => {
+                    localStorage.setItem('absRngSave', JSON.stringify(state));
+                    _savePending = false;
+                }, 2000);
+            }
+        }
+        function saveDataNow() {
+            // Immediate save for critical moments (prestige, reset, name change)
+            state.version = SAVE_VERSION;
+            _savePending = false;
+            localStorage.setItem('absRngSave', JSON.stringify(state));
+        }
+
         // --- Core Mechanics ---
         function calculateRNG() {
             const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.02));
@@ -1600,7 +1639,7 @@ if (statusEffect) {
         if (remaining <= 0) {
             clearInterval(potionInterval);
         }
-    }, 50);
+    }, 250);
 
     potionTimeout = setTimeout(() => {
         potionMultiplier = 1;
@@ -1668,10 +1707,9 @@ if (statusEffect) {
             if (potionTimeout) clearTimeout(potionTimeout);
             if (potionInterval) clearInterval(potionInterval);
 
-            saveData();
+            saveDataNow();
             location.reload();
-            
-            showAnnouncement(`PRESTIGE! +${bonus}x Luck permanently unlocked!`, "#FFD700");
+
         }
 
         // --- Global Announcements System ---
@@ -1746,73 +1784,106 @@ scheduleNextGlobalAnnounce();
         // --- UI Updates ---
         function updateUI(result) {
             const totalLuck = state.luck * potionMultiplier;
-            document.getElementById('display-player-name').textContent = state.playerName;
-            document.getElementById('stat-total-rolls').textContent = formatNumber(state.totalRolls);
-            document.getElementById('stat-rolls').textContent = formatNumber(state.rolls);
-            document.getElementById('stat-points').textContent = formatNumber(state.points);
-            document.getElementById("stat-luck").textContent = totalLuck.toFixed(2) + "x";  
-            document.getElementById('stat-prestige').textContent = formatNumber(state.prestigeCount)        
-            document.getElementById('pity-counter').textContent = state.pity;
+            DOM.playerName.textContent  = state.playerName;
+            DOM.totalRolls.textContent  = formatNumber(state.totalRolls);
+            DOM.rolls.textContent       = formatNumber(state.rolls);
+            DOM.points.textContent      = formatNumber(state.points);
+            DOM.luck.textContent        = totalLuck.toFixed(2) + "x";
+            DOM.prestige.textContent    = formatNumber(state.prestigeCount);
+            DOM.pity.textContent        = state.pity;
 
             if (result) {
-                const img = document.getElementById('rolled-image');
-                img.style.display = 'block';
-                img.src = `images/${getFilename(result)}.png`;
-                img.onerror = () => { img.src = getPlaceholderSVG(result.color, result.name); };
+                DOM.rolledImage.style.display = 'block';
+                DOM.rolledImage.src = `images/${getFilename(result)}.png`;
+                DOM.rolledImage.onerror = () => { DOM.rolledImage.src = getPlaceholderSVG(result.color, result.name); };
                 
-                const nameEl = document.getElementById('rolled-name');
-                nameEl.textContent = result.name; nameEl.style.color = result.color;
-                nameEl.className = `efx-${result.effect}`;
-                document.getElementById('rolled-odds').textContent = `1 in ${formatNumber(result.odds)}`;
+                DOM.rolledName.textContent = result.name;
+                DOM.rolledName.style.color = result.color;
+                DOM.rolledName.className   = `efx-${result.effect}`;
+                DOM.rolledOdds.textContent = `1 in ${formatNumber(result.odds)}`;
             }
 
             const cost = getUpgradeCost();
-            const btnUp = document.getElementById('btn-upgrade');
-            btnUp.textContent = `Upgrade Luck (Cost: ${formatNumber(cost)})`;
-            btnUp.style.opacity = state.points >= cost ? '1' : '0.5';
+            DOM.btnUpgrade.textContent   = `Upgrade Luck (Cost: ${formatNumber(cost)})`;
+            DOM.btnUpgrade.style.opacity = state.points >= cost ? '1' : '0.5';
 
             buildInventory();
         }
 
         function buildInventory() {
-            const grid = document.getElementById('inventory-grid');
-            grid.innerHTML = '';
-            
-            let unlockedCount = 0; let highestId = 0;
+            const grid = DOM.invGrid;
+            let unlockedCount = 0;
+            let highestId = 0;
 
             rarities.forEach(r => {
                 const count = state.inventory[r.id] || 0;
                 const isUnlocked = count > 0;
                 if (isUnlocked) { unlockedCount++; if (r.id > highestId) highestId = r.id; }
 
-                const el = document.createElement('div');
-                el.className = `inv-item ${isUnlocked ? '' : 'locked'}`;
-                
-                if (isUnlocked) {
-                    el.style.borderColor = r.color;
-                    el.style.boxShadow = `inset 0 0 10px rgba(${hexToRgb(r.color)}, 0.2)`;
-                    const img = document.createElement('img');
-                    img.src = `images/${getFilename(r)}.png`;
-                    img.onerror = () => { img.src = getPlaceholderSVG(r.color, r.name); };
-                    el.appendChild(img);
-                    const badge = document.createElement('div');
-                    badge.className = 'item-count'; badge.textContent = count > 999 ? '999+' : formatNumber(count);
-                    el.appendChild(badge);
-                    
-                    el.onmouseenter = (e) => showTooltip(e, r, count);
-                    el.onmousemove = moveTooltip; el.onmouseleave = hideTooltip;
-                    el.addEventListener('click', () => openInspect(r, count));
+                let el = grid.querySelector(`[data-rarity-id="${r.id}"]`);
+
+                if (!el) {
+                    // First time: create the element
+                    el = document.createElement('div');
+                    el.dataset.rarityId = r.id;
+                    el.className = `inv-item ${isUnlocked ? '' : 'locked'}`;
+
+                    if (isUnlocked) {
+                        el.style.borderColor = r.color;
+                        el.style.boxShadow = `inset 0 0 10px rgba(${hexToRgb(r.color)}, 0.2)`;
+                        const img = document.createElement('img');
+                        img.src = `images/${getFilename(r)}.png`;
+                        img.onerror = () => { img.src = getPlaceholderSVG(r.color, r.name); };
+                        el.appendChild(img);
+                        const badge = document.createElement('div');
+                        badge.className = 'item-count';
+                        badge.textContent = count > 999 ? '999+' : formatNumber(count);
+                        el.appendChild(badge);
+                        el.onmouseenter = (e) => showTooltip(e, r, count);
+                        el.onmousemove = moveTooltip;
+                        el.onmouseleave = hideTooltip;
+                        el.addEventListener('click', () => openInspect(r, state.inventory[r.id] || 0));
+                    }
+                    grid.appendChild(el);
+                } else {
+                    // Already exists — only patch what changed
+                    const wasLocked = el.classList.contains('locked');
+
+                    if (!wasLocked && isUnlocked) {
+                        // Just update the count badge
+                        const badge = el.querySelector('.item-count');
+                        if (badge) badge.textContent = count > 999 ? '999+' : formatNumber(count);
+                        // Refresh tooltip closure value
+                        el.onmouseenter = (e) => showTooltip(e, r, count);
+                        el.addEventListener('click', () => openInspect(r, state.inventory[r.id] || 0));
+                    } else if (wasLocked && isUnlocked) {
+                        // Just unlocked! Rebuild this one element only
+                        el.className = 'inv-item';
+                        el.style.borderColor = r.color;
+                        el.style.boxShadow = `inset 0 0 10px rgba(${hexToRgb(r.color)}, 0.2)`;
+                        const img = document.createElement('img');
+                        img.src = `images/${getFilename(r)}.png`;
+                        img.onerror = () => { img.src = getPlaceholderSVG(r.color, r.name); };
+                        el.appendChild(img);
+                        const badge = document.createElement('div');
+                        badge.className = 'item-count';
+                        badge.textContent = count > 999 ? '999+' : formatNumber(count);
+                        el.appendChild(badge);
+                        el.onmouseenter = (e) => showTooltip(e, r, count);
+                        el.onmousemove = moveTooltip;
+                        el.onmouseleave = hideTooltip;
+                        el.addEventListener('click', () => openInspect(r, state.inventory[r.id] || 0));
+                    }
                 }
-                grid.appendChild(el);
             });
 
-            document.getElementById('progress-text').textContent = `${unlockedCount}/${rarities.length}`;
-            document.getElementById('progress-bar').style.width = `${(unlockedCount / rarities.length) * 100}%`;
-            
-            const highestName = highestId > 0 ? rarities.find(r => r.id === highestId).name : "None";
+            DOM.progressText.textContent = `${unlockedCount}/${rarities.length}`;
+            DOM.progressBar.style.width  = `${(unlockedCount / rarities.length) * 100}%`;
+
+            const highestName  = highestId > 0 ? rarities.find(r => r.id === highestId).name  : "None";
             const highestColor = highestId > 0 ? rarities.find(r => r.id === highestId).color : "var(--text-muted)";
-            const hText = document.getElementById('highest-text');
-            hText.textContent = highestName; hText.style.color = highestColor;
+            DOM.highestText.textContent  = highestName;
+            DOM.highestText.style.color  = highestColor;
         }
 
         const tooltip = document.getElementById('tooltip');
@@ -1900,11 +1971,8 @@ scheduleNextGlobalAnnounce();
                 
             };
 
-            saveData();
-
-            if (forced) {
+            saveDataNow();
                 alert("bon voyage LeNigga, update came up, yo save data went down.");
-            }
 
             location.reload();
         }
@@ -1959,7 +2027,7 @@ scheduleNextGlobalAnnounce();
         document.getElementById('btn-save-name').addEventListener('click', () => {
             const input = document.getElementById('input-name').value.trim();
             if (input.length > 0 && input.length <= 32) {
-                state.playerName = input; saveData(); updateUI();
+                state.playerName = input; saveDataNow(); updateUI();
                 const btn = document.getElementById('btn-save-name'); const origText = btn.textContent;
                 btn.textContent = "Saved!"; btn.style.background = "var(--accent)";
                 setTimeout(() => { btn.textContent = origText; btn.style.background = ""; }, 1000);
@@ -1995,6 +2063,7 @@ scheduleNextGlobalAnnounce();
         });
         document.getElementById('btn-prestige').addEventListener('click', triggerPrestige);
         // Initialize
+        initDOM();
         loadData();
 
     </script>
