@@ -832,7 +832,6 @@
         function calculateRNG() {
             const pityMulti = state.pity >= 100 ? 50 : (1 + (state.pity * 0.02));
             const currentLuck = (state.luck * potionMultiplier) * pityMulti;
-            let roll = Math.random();
             
             const availableRarities = rarities.filter(r => {
                 // If item requires a status, it must match the active status
@@ -843,9 +842,13 @@
                 return true;
             });
 
+            // Each item gets its own independent roll so same-odds items
+            // (e.g. all Good Samaritan / Misanthropic Mind rarities) have
+            // equal probability of being selected instead of the last one
+            // in the array always winning.
             for (let i = availableRarities.length - 1; i >= 0; i--) {
                 const chance = (1 / availableRarities[i].odds) * currentLuck;
-                if (roll <= chance) return availableRarities[i];
+                if (Math.random() <= chance) return availableRarities[i];
             }
             return rarities[0];
         }
