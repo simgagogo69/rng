@@ -291,6 +291,49 @@
 
         @keyframes csFlashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
 
+        /* === GROUP 1: MORALITY === */
+        @keyframes streamSlideL {
+            0%   { transform: translateY(-50%) translateX(0); opacity: 1; }
+            100% { transform: translateY(-50%) translateX(100%); opacity: 1; }
+        }
+        @keyframes streamSlideR {
+            0%   { transform: translateY(-50%) translateX(0); opacity: 1; }
+            100% { transform: translateY(-50%) translateX(-100%); opacity: 1; }
+        }
+        @keyframes splitBg {
+            0%   { clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); }
+            100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+        }
+
+        /* === GROUP 2: GRIEF === */
+        @keyframes fogFloat {
+            0%   { transform: translateY(0px) scaleX(1);   opacity: 0; }
+            30%  { opacity: 0.55; }
+            100% { transform: translateY(-90px) scaleX(1.1); opacity: 0; }
+        }
+        @keyframes shardFloat {
+            0%   { transform: translateY(0) rotate(0deg);   opacity: 0; }
+            20%  { opacity: 0.85; }
+            100% { transform: translateY(-200px) rotate(var(--shard-rot)); opacity: 0; }
+        }
+
+        /* === GROUP 3: LEARNING === */
+        @keyframes runeConverge {
+            0%   { opacity: 0; transform: translate(var(--rx), var(--ry)) scale(1.2); }
+            30%  { opacity: 0.9; }
+            100% { opacity: 0;  transform: translate(0px, 0px) scale(0); }
+        }
+
+        /* === GROUP 4: QUESTIONS === */
+        @keyframes qSpinIn {
+            0%   { transform: translate(var(--qx), var(--qy)) rotate(0deg)   scale(1.2); opacity: 0.85; }
+            100% { transform: translate(0px, 0px)              rotate(var(--qr)) scale(0);   opacity: 0; }
+        }
+        @keyframes qSpinOut {
+            0%   { transform: translate(0px, 0px) rotate(0deg)   scale(0);   opacity: 0; }
+            100% { transform: translate(var(--qx), var(--qy)) rotate(var(--qr)) scale(1); opacity: 0.8; }
+        }
+
         .cs-frame {
             position: absolute;
             width: 350px; height: 350px;
@@ -380,8 +423,154 @@
     background: lime;
     transition: width 0.1s linear;
 }
-    </style>
-</head>
+        /* ═══════════════════════════════════════
+           GLOBAL CHAT PULLDOWN
+        ═══════════════════════════════════════ */
+        #chat-wrapper {
+            position: fixed;
+            top: 0;
+            /* left is set dynamically by JS on init */
+            z-index: 4000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        #chat-tab {
+            pointer-events: all;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 4px 22px 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            backdrop-filter: blur(8px);
+            transition: color 0.2s, background 0.2s;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        #chat-tab:hover { color: #fff; background: rgba(30,30,40,0.85); }
+        #chat-wrapper.dragging #chat-tab { cursor: grabbing; }
+        #chat-tab {
+            cursor: grab;
+        }
+        #chat-tab-arrow {
+            display: inline-block;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+            font-style: normal;
+        }
+        #chat-wrapper.open #chat-tab-arrow { transform: rotate(180deg); }
+
+        #chat-panel {
+            pointer-events: all;
+            width: 420px;
+            max-width: 96vw;
+            background: rgba(10,10,18,0.92);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 14px 14px;
+            backdrop-filter: blur(14px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            /* slide animation */
+            max-height: 0;
+            opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+        }
+        #chat-wrapper.open #chat-panel {
+            max-height: 380px;
+            opacity: 1;
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-height: 260px;
+            max-height: 260px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
+        }
+        #chat-messages::-webkit-scrollbar { width: 5px; }
+        #chat-messages::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+
+        .chat-msg {
+            font-size: 0.82rem;
+            line-height: 1.45;
+            word-break: break-word;
+            animation: chatMsgIn 0.2s ease-out both;
+        }
+        @keyframes chatMsgIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .chat-msg .chat-user {
+            font-weight: 700;
+            margin-right: 4px;
+        }
+        .chat-msg .chat-text { color: #ccd0e0; }
+        .chat-msg.chat-system { color: #666880; font-style: italic; font-size: 0.76rem; }
+        .chat-msg.chat-self .chat-user { color: var(--accent); }
+        .chat-msg.chat-bot  .chat-user { color: #a0c4ff; }
+
+        .chat-typing-indicator {
+            display: flex; align-items: center; gap: 4px;
+            padding: 2px 0;
+        }
+        .chat-typing-indicator span {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #555870;
+            animation: typingBounce 1.1s ease-in-out infinite;
+        }
+        .chat-typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+        .chat-typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+            40%            { transform: translateY(-5px); opacity: 1; }
+        }
+
+        #chat-input-row {
+            display: flex;
+            gap: 6px;
+            padding: 8px 10px;
+            border-top: 1px solid var(--border-color);
+        }
+        #chat-input {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            padding: 6px 10px;
+            font-family: inherit;
+            font-size: 0.82rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #chat-input:focus { border-color: var(--accent); }
+        #chat-send {
+            background: var(--accent);
+            border: none; border-radius: 8px;
+            color: #fff; font-size: 0.82rem; font-weight: bold;
+            padding: 6px 14px; cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+        #chat-send:hover { background: var(--accent-hover); }
+        
+</style>
 <body>
 
     <header>
@@ -456,6 +645,21 @@
     <div id="global-announcement"></div>
     <div id="tooltip" class="tooltip"></div>
 
+    <!-- ═══ GLOBAL CHAT PULLDOWN ═══ -->
+    <div id="chat-wrapper">
+        <div id="chat-tab">
+            <span>💬 Global Chat</span>
+            <i id="chat-tab-arrow">▼</i>
+        </div>
+        <div id="chat-panel">
+            <div id="chat-messages"></div>
+            <div id="chat-input-row">
+                <input id="chat-input" type="text" maxlength="200" placeholder="Say something..." autocomplete="off">
+                <button id="chat-send">Send</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Inspect Modal -->
     <div id="inspect-modal" class="modal-overlay">
         <div class="modal-content">
@@ -523,62 +727,87 @@
 
                 <div class="btn-upgrade" id="buy-major">
                     🧪 Major Luck Potion<br>
-                    <span class="desc">1000x Luck for 120s (Cost: 1Qa)</span>
+                    <span class="desc">1K× Luck for 120s (Cost: 1Qa)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-god">
                     🧪 GOD Potion<br>
-                    <span class="desc">100000x Luck for 30s (Cost: 10Qi)</span>
+                    <span class="desc">100K× Luck for 30s (Cost: 10Qi)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-eclipse">
                     🩸 Eclipse Convergence Serum<br>
-                    <span class="desc">Grants <span style="color:#8f0303;">"Eclipsed"</span> and 125000x Luck for 2m (Cost: 10Sx)</span>
+                    <span class="desc">Grants <span style="color:#8f0303;">"Eclipsed"</span> and 125K× Luck for 2m (Cost: 10Sx)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-void">
                     🌌 Void Distortion Elixir<br>
-                    <span class="desc">Grants <span style="color:#8a2be2;">"Voidmark"</span> and 125000x Luck for 2m (Cost: 10Sx)</span>
+                    <span class="desc">Grants <span style="color:#8a2be2;">"Voidmark"</span> and 125K× Luck for 2m (Cost: 10Sx)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-chrono">
                     ⏳ Chrono Fracture Tonic<br>
-                    <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 125000x Luck for 2m (Cost: 10Sx)</span>
+                    <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 125K× Luck for 2m (Cost: 10Sx)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-potent-eclipse">
                     🩸 Potent Eclipse Convergence Serum<br>
-                    <span class="desc">Grants <span style="color:#8f0303;">"Eclipsed"</span> and 500000x Luck for 4m (Cost: 1Sp)</span>
+                    <span class="desc">Grants <span style="color:#8f0303;">"Eclipsed"</span> and 500K× Luck for 4m (Cost: 1Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-potent-void">
                     🌌 Potent Void Distortion Elixir<br>
-                    <span class="desc">Grants <span style="color:#8a2be2;">"Voidmark"</span> and 500000x Luck for 4m (Cost: 1Sp)</span>
+                    <span class="desc">Grants <span style="color:#8a2be2;">"Voidmark"</span> and 500K× Luck for 4m (Cost: 1Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-potent-chrono">
                     ⏳ Potent Chrono Fracture Tonic<br>
-                    <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 500000x Luck for 4m (Cost: 1Sp)</span>
+                    <span class="desc">Grants <span style="color:#ffd700;">"Chronobind"</span> and 500K× Luck for 4m (Cost: 1Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-eldritch">
                     💤 Eldritch Sleep Brew<br>
-                    <span class="desc">Grants <span style="color:#0235b5;">"Dead Sleep"</span> and 1000000x Luck for 4m (Cost: 10Sp)</span>
+                    <span class="desc">Grants <span style="color:#0235b5;">"Dead Sleep"</span> and 5M× Luck for 4m (Cost: 10Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-virtue">
                     🕊️ Elixir of Vitrues<br>
-                    <span class="desc">Grants <span style="color:#ffee8b;">"Good Samaritan"</span> and 5000000x Luck for 3m (Cost: 100Sp)</span>
+                    <span class="desc">Grants <span style="color:#ffee8b;">"Good Samaritan"</span> and 10M× Luck for 3m (Cost: 100Sp)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-sin">
                     👁️ Tonic of Sins<br>
-                    <span class="desc">Grants <span style="color:#d52b00;">"Misanthropic Mind"</span> and 5000000x Luck for 3m (Cost: 100Sp)</span>
+                    <span class="desc">Grants <span style="color:#d52b00;">"Misanthropic Mind"</span> and 10M× Luck for 3m (Cost: 100Sp)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-mortal">
+                    👤 Mortal Blood<br>
+                    <span class="desc">Grants <span style="color:#D8BFAA;">"Mortality"</span> and 20M× Luck for 2m (Cost: 1Oc)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-grief">
+                    🖤 Elixir of the Grieved<br>
+                    <span class="desc">Grants <span style="color:#A29FA5;">"Grief"</span> and 100M× Luck for 4m (Cost: 10Oc)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-growth">
+                    🧠 Tonic for the Mind<br>
+                    <span class="desc">Grants <span style="color:#4CAF50;">"Growth Mindset"</span> and 1B× Luck for 3m (Cost: 200Oc)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-question">
+                    🌀 Interrogation Serum<br>
+                    <span class="desc">Grants <span style="color:#5D4EFA;">"The Question"</span> and 10B× Luck for 2m (Cost: 1No)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-unknown">
                     ❓ Liquid of ???<br>
-                    <span class="desc">Grants <span style="color:#ffffff;">"???"</span> and 10000000x Luck for 1m (Cost: 1Oc)</span>
+                    <span class="desc">Grants <span style="color:#ffffff;">"???"</span> and 100B× Luck for 4m (Cost: 100No)</span>
+                </div>
+
+                <div class="btn-upgrade" id="buy-he-knows" style="display:none; border: 1px solid #aab4ff55; box-shadow: 0 0 18px #aab4ff33;">
+                    👁️ <span style="color:#e8eaff; font-weight:900;">He Knows</span><br>
+                    <span class="desc">Grants <span style="color:#e8eaff; text-shadow:0 0 8px #aab4ff;">"to know"</span> and 1T× Luck for 5m (Cost: 1UnD)</span>
                 </div>
             </div>
 
@@ -637,6 +866,7 @@
         <div id="game-potion-bar"></div>
     </div>
 </div>
+    <script src="chat.js"></script>
     <script>
         const rarities = [
             { id: 1, name: "Common", img: "common", odds: 2, color: "#A0A0A0", effect: 1, val: 1 },
@@ -725,7 +955,22 @@
             { id: 84, name: "【 ✹ 𝐋𝐔𝐗𝐔𝐑𝐈𝐀 ✹ 】", img: "luxuria", odds: 1e17, color: "#A92C2E", effect: 7, val: 5e27, requiredStatus: "misanthropic mind"},
             { id: 85, name: "〖 ✺ 𝐈𝐑𝐀 ✺ 〗", img: "ira", odds: 1e17, color: "#A92C2E", effect: 7, val: 5e27, requiredStatus: "misanthropic mind"},
             { id: 86, name: "《 ⟢ 𝐒𝐔𝐏𝐄𝐑𝐁𝐈𝐀 ⟣ 》", img: "superbia", odds: 1e17, color: "#995479", effect: 7, val: 5e27, requiredStatus: "misanthropic mind"},
-            { id: 87, name: "¿⸮? 𝕀  𝔻 𝕆 ℕ ' 𝕋  𝕂 ℕ 𝕆 𝕎 ?⸮¿", img: "unknown", odds: 1e18, colour: "???", effect: 7, val: 1e29, requiredStatus: "???"},
+            { id: 87, name: "【 TO LIVE 】", img: "to_live", odds: 1e18, color: "#FDFBDE", effect: 7, val: 1e28, requiredStatus: "mortality"},
+            { id: 88, name: "〖 TO DIE 〗", img: "to_die", odds: 1e18, color: "#C8CAE9", effect: 7, val: 1e28, requiredStatus: "mortality"},
+            { id: 89, name: "『𝐃 𝐄 𝐍 𝐈 𝐀 𝐋』", img: "denial", odds: 1e19, color: "#FEFFE5", effect: 7, val: 1e29, requiredStatus: "grief"},
+            { id: 90, name: "『𝑨 𝑵 𝑮 𝑬 𝑹』", img: "anger", odds: 1e20, color: "#B38593", effect: 7, val: 1e30, requiredStatus: "grief"},
+            { id: 91, name: "『𝘉 𝘈 𝘙 𝘎 𝘈 𝘐 𝘕 𝘐 𝘕 𝘎』", img: "bargaining", odds: 2.5e20, color: "#FEFFE5", effect: 7, val: 2.5e30, requiredStatus: "grief"},
+            { id: 92, name: "『𝘥 𝘦 𝘱 𝘳 𝘦 𝘴 𝘴 𝘪 𝘰 𝘯』", img: "depression", odds: 5e20, color: "#ffffff", effect: 7, val: 5e30, requiredStatus: "grief"},
+            { id: 93, name: "「𝐀 𝐂 𝐂 𝐄 𝐏 𝐓 𝐀 𝐍 𝐂 𝐄」", img: "acceptance", odds: 1e21, color: "#FEFFE5", effect: 7, val: 1e31, requiredStatus: "grief"},
+            { id: 94, name: "〘 𝑳 𝑬 𝑨 𝑹 𝑵 〙", img: "learn", odds: 1e22, color: "#ffffff", effect: 7, val: 1e31, requiredStatus: "growth mindset"},
+            { id: 95, name: "〈 𝑪 𝑼 𝑹 𝑰 𝑶 𝑺 𝑰 𝑻 𝒀 〉", img: "curiosity", odds: 2.5e22, color: "#ffffff", effect: 7, val: 2.5e32, requiredStatus: "growth mindset"},
+            { id: 96, name: "《 𝑲 𝑵 𝑶 𝑾 𝑳 𝑬 𝑫 𝑮 𝑬 》", img: "knowledge", odds: 5e22, color: "#FBEAA9", effect: 7, val: 5e32, requiredStatus: "growth mindset"},
+            { id: 97, name: "〖 𝑰 𝑵 𝑸 𝑼 𝑰 𝑹 𝑬 〗", img: "inquire", odds: 7.5e22, color: "#FDEB9F", effect: 7, val: 7.5e32, requiredStatus: "growth mindset"},
+            { id: 98, name: "⇒ 𝕊 ℍ 𝔸 𝕃 𝕃  𝑰  𝔸 𝕊 𝕂  ? ⇐", img: "ask", odds: 1e23, color: "#BBC7CE", effect: 7, val: 1e33, requiredStatus: "the question"},
+            { id: 99, name: "⇐ 𝕊 ℍ 𝔸 𝕃 𝕃  𝑰  𝔸 ℕ 𝕊 𝕎 𝔼 ℝ ? ⇒", img: "answer", odds: 1e23, color: "#EAF9FD", effect: 7, val: 1e33, requiredStatus: "the question"},
+            { id: 100, name: "¿⸮? 𝑰  𝔻 𝕆 ℕ ' 𝕋  𝕂 ℕ 𝕆 𝕎 ?⸮¿", img: "unknown", odds: 1e24, colour: "???", effect: 7, val: 1e34, requiredStatus: "???"},
+            { id: 101, name: "『!』ℍ 𝔼  𝕂 ℕ 𝕆 𝕎 𝕊『?』", img: "known", odds: 1e27, colour: "ask him", effect: 7, val: 1e35, requiredStatus: "to know"},
+
         ];
         let potionMultiplier = 1;
         let potionEndTime = 0;
@@ -740,21 +985,28 @@
             "dead sleep": "#0235b5",
             "good samaritan": "#ffee8b",
             "misanthropic mind": "#d52b00",
+            "mortality": "#D8BFAA",
+            "grief": "#A29FA5",
+            "growth mindset": "#4CAF50",
+            "the question": "#5D4EFA",
             "???": "#ffffff",
+            "to know": "#e8eaff",
         };
-        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0, prestigeLuck: 0 };
+        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0, prestigeLuck: 0, heKnowsUnlocked: false };
         const validCodes = {
             'RELEASE': 1000,
             'SIMGAGOGO69': 10000,
             'WUPDATE': 2000,
-            'CHEATERMEATBEATER': 10000000000,
-            'AVISARMPITS': 1000000000000000000000000,
-            'IHATEMAINSTREAMGIRLS': 10000000000000000000000000,
-            'ELDRITCHSLUMBER': 250000000000000000000000000,
-            'VIRTUESANDSINS': 250000000000000000000000000,
-            'CRUNCHCHOCOLATE': 10000000000000000000000000000,
-            'SEATINGPLAN': 10000000000000000000000000000,
-            'HUGGILYNIGGA': 3900000000000000000000000000,
+            'CHEATERMEATBEATER': 1e10,
+            'AVISARMPITS': 1e25,
+            'IHATEMAINSTREAMGIRLS': 1e25,
+            'ELDRITCHSLUMBER': 2.5e26,
+            'VIRTUESANDSINS': 2.5e26,
+            'CRUNCHCHOCOLATE': 1e28,
+            'SEATINGPLAN': 1e28,
+            'HUGGILYNIGGA': 3.9e27,
+            'GLOBALCHAT': 1e27,
+            'SECRETWAIFU': 1e27,
             'BADPRESTIGE': 67
         };
         const SAVE_VERSION = 3;
@@ -785,10 +1037,10 @@
         function formatNumber(num) {
             if (num < 1000) return Math.floor(num).toString();
             const map = [
-                { value: 1e33, symbol: "Dc" }, { value: 1e30, symbol: "No" }, { value: 1e27, symbol: "Oc" },
-                { value: 1e24, symbol: "Sp" }, { value: 1e21, symbol: "Sx" }, { value: 1e18, symbol: "Qi" },
-                { value: 1e15, symbol: "Qa" }, { value: 1e12, symbol: "T" }, { value: 1e9,  symbol: "B" },
-                { value: 1e6,  symbol: "M" }, { value: 1e3,  symbol: "K" }
+                { value: 1e36, symbol: "UnD" }, { value: 1e33, symbol: "Dc" }, { value: 1e30, symbol: "No" }, 
+                { value: 1e27, symbol: "Oc" }, { value: 1e24, symbol: "Sp" }, { value: 1e21, symbol: "Sx" }, 
+                { value: 1e18, symbol: "Qi" }, { value: 1e15, symbol: "Qa" }, { value: 1e12, symbol: "T" },
+                { value: 1e9,  symbol: "B" }, { value: 1e6,  symbol: "M" }, { value: 1e3,  symbol: "K" }
             ];
             for (let i = 0; i < map.length; i++) {
                 if (num >= map[i].value) {
@@ -930,7 +1182,12 @@ function triggerRoll() {
             const tId = rarity.id;
             const isHolyTier = tId >= 73 && tId <= 79;
             const isDemonicTier = tId >= 80 && tId <= 86;
-            const isID87 = tId === 87;
+            const isMorality = tId === 87 || tId === 88;
+            const isGriefGroup = tId >= 89 && tId <= 93;
+            const isGrowthGroup = tId >= 94 && tId <= 97;
+            const isQuestionGroup = tId === 98 || tId === 99;
+            const isID100 = tId === 100;
+            const isID101 = tId === 101;
             const isEpicTier = tId >= 70;
             const t45 = tId >= 45;
             const t50 = tId >= 50;
@@ -946,6 +1203,7 @@ function triggerRoll() {
             overlay.appendChild(star);
 
             let buildupTime = isEpicTier ? 5000 : (t56 ? 3000 : 1800);
+            if (isID101) buildupTime = 8000;
             let targetX = isEpicTier ? '50%' : (t50 ? '30%' : '50%');
             
             star.animate([
@@ -1015,7 +1273,7 @@ if (isDemonicTier) {
     setTimeout(() => clearInterval(fireInterval), buildupTime);
 }
 
-if (isID87) {
+if (isID100) {
     const questionMarks = ['?', '⸮', '¿'];
     let qMarkIndex = 0;
     let qTrailInterval = setInterval(() => {
@@ -1050,9 +1308,363 @@ if (isID87) {
     overlay.qTrailInterval = qTrailInterval; 
 }
 
+if (isID101) {
+    const bangQ = ['『!』', '『?』'];
+    let bqIndex = 0;
+    let bqInterval = setInterval(() => {
+        const starRect    = star.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+        const sx = ((starRect.left - overlayRect.left + starRect.width  / 2) / overlayRect.width)  * 100;
+        const sy = ((starRect.top  - overlayRect.top  + starRect.height / 2) / overlayRect.height) * 100;
+
+        const g = document.createElement('div');
+        g.style.position    = 'absolute';
+        g.style.left        = sx + '%';
+        g.style.top         = sy + '%';
+        g.style.fontSize    = (22 + Math.random() * 18) + 'px';
+        g.style.fontWeight  = '900';
+        g.style.color       = bqIndex % 2 === 0 ? '#ffffff' : '#aab4ff';
+        g.style.textShadow  = `0 0 18px ${bqIndex % 2 === 0 ? '#ffffff' : '#8899ff'}`;
+        g.style.zIndex      = '8';
+        g.style.opacity     = '0.9';
+        g.style.pointerEvents = 'none';
+        g.textContent       = bangQ[bqIndex % 2];
+        bqIndex++;
+        overlay.appendChild(g);
+
+        g.animate([
+            { transform: 'translate(-50%,-50%) scale(1.2)', opacity: 0.9 },
+            { transform: 'translate(-50%,-50%) scale(0)',   opacity: 0   }
+        ], { duration: 700, easing: 'ease-out' }).onfinish = () => g.remove();
+    }, 80);
+
+    setTimeout(() => clearInterval(bqInterval), buildupTime);
+    overlay.bqInterval = bqInterval;
+}
+
             await sleep(buildupTime);
 
-            if (isID87) {
+            if (isID101) {
+                const C1 = '#e8eaff';  
+                const C2 = '#aab4ff'; 
+                const C3 = '#ffffff';   
+
+                if (overlay.bqInterval) clearInterval(overlay.bqInterval);
+
+                star.animate([
+                    { transform: 'translate(-50%,-50%) scale(1.5)',  opacity: 1,   filter: 'blur(0px)' },
+                    { transform: 'translate(-50%,-50%) scale(4)',    opacity: 0.6, filter: 'blur(2px)'  },
+                    { transform: 'translate(-50%,-50%) scale(0)',    opacity: 0,   filter: 'blur(8px)'  }
+                ], { duration: 900, fill: 'forwards', easing: 'cubic-bezier(0.6,0,1,1)' });
+                await sleep(600);
+                flashScreen(overlay);
+                await sleep(300);
+                star.remove();
+
+                overlay.style.background = '#000000';
+                await sleep(700);
+
+                const eyeAura = document.createElement('div');
+                eyeAura.style.cssText = `
+                    position:absolute;left:50%;top:50%;
+                    width:500px;height:240px;
+                    transform:translate(-50%,-50%);
+                    border-radius:50%;
+                    background:radial-gradient(ellipse, ${C2}18 0%, transparent 70%);
+                    box-shadow:0 0 120px 40px ${C2}22;
+                    z-index:14;pointer-events:none;opacity:0;
+                `;
+                overlay.appendChild(eyeAura);
+                eyeAura.animate([{opacity:0},{opacity:1}], {duration:600, fill:'forwards'});
+
+                const eyeWrap = document.createElement('div');
+                eyeWrap.style.cssText = `
+                    position:absolute;left:50%;top:50%;
+                    width:340px;height:148px;
+                    transform:translate(-50%,-50%);
+                    border-radius:50%;
+                    overflow:hidden;
+                    z-index:22;
+                    box-shadow:0 0 80px ${C1}, 0 0 160px ${C2};
+                    border:1px solid ${C1}88;
+                `;
+                overlay.appendChild(eyeWrap);
+
+                const sclera = document.createElement('div');
+                sclera.style.cssText = `
+                    position:absolute;top:0;left:0;width:100%;height:100%;
+                    background:radial-gradient(ellipse at center, #d8deff 0%, #b0b8f8 50%, #8090d8 100%);
+                `;
+                eyeWrap.appendChild(sclera);
+
+                const iris = document.createElement('div');
+                iris.style.cssText = `
+                    position:absolute;left:50%;top:50%;
+                    width:110px;height:110px;
+                    transform:translate(-50%,-50%) scale(0);
+                    border-radius:50%;
+                    background:radial-gradient(circle, #ffffff 0%, ${C2} 25%, #4455cc 55%, #111033 80%, #000 100%);
+                    box-shadow:0 0 30px ${C2}, 0 0 60px ${C1};
+                `;
+                eyeWrap.appendChild(iris);
+
+                const pupil = document.createElement('div');
+                pupil.style.cssText = `
+                    position:absolute;left:50%;top:50%;
+                    width:44px;height:44px;
+                    transform:translate(-50%,-50%);
+                    border-radius:50%;
+                    background:radial-gradient(circle, #000011 0%, #000 100%);
+                    box-shadow:0 0 20px #000033;
+                `;
+                iris.appendChild(pupil);
+
+                const flare = document.createElement('div');
+                flare.style.cssText = `
+                    position:absolute;left:30%;top:20%;
+                    width:20px;height:20px;border-radius:50%;
+                    background:radial-gradient(circle, rgba(255,255,255,0.9) 0%, transparent 70%);
+                    pointer-events:none;
+                `;
+                iris.appendChild(flare);
+
+                const lidT = document.createElement('div');
+                lidT.style.cssText = `
+                    position:absolute;top:0;left:0;
+                    width:100%;height:50%;
+                    background:#000;z-index:5;
+                    transform-origin:top center;
+                `;
+                eyeWrap.appendChild(lidT);
+
+                const lidB = document.createElement('div');
+                lidB.style.cssText = `
+                    position:absolute;bottom:0;left:0;
+                    width:100%;height:50%;
+                    background:#000;z-index:5;
+                    transform-origin:bottom center;
+                `;
+                eyeWrap.appendChild(lidB);
+
+                const vig = document.createElement('div');
+                vig.style.cssText = `
+                    position:absolute;top:0;left:0;width:100%;height:100%;
+                    background:radial-gradient(ellipse at center, transparent 0%, transparent 25%, rgba(0,0,10,0.7) 65%, #000014 100%);
+                    z-index:21;pointer-events:none;
+                `;
+                overlay.appendChild(vig);
+
+                await sleep(300);
+                iris.animate([
+                    {transform:'translate(-50%,-50%) scale(0)'},
+                    {transform:'translate(-50%,-50%) scale(1.08)'},
+                    {transform:'translate(-50%,-50%) scale(1)'}
+                ], {duration:2800, fill:'forwards', easing:'cubic-bezier(0.2,0,0.15,1)', delay:400});
+                lidT.animate([{transform:'scaleY(1)'},{transform:'scaleY(0)'}],
+                    {duration:2800, fill:'forwards', easing:'cubic-bezier(0.15,0,0.2,1)', delay:200});
+                lidB.animate([{transform:'scaleY(1)'},{transform:'scaleY(0)'}],
+                    {duration:2800, fill:'forwards', easing:'cubic-bezier(0.15,0,0.2,1)', delay:200});
+
+                await sleep(3100);
+
+                pupil.animate([
+                    {width:'44px',height:'44px'},
+                    {width:'14px',height:'14px'}
+                ], {duration:400, fill:'forwards', easing:'ease-in'});
+
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const ring = document.createElement('div');
+                        ring.style.cssText = `
+                            position:absolute;left:50%;top:50%;
+                            width:340px;height:148px;
+                            transform:translate(-50%,-50%);
+                            border-radius:50%;
+                            border:2px solid ${i%2===0 ? C1 : C2};
+                            box-shadow:0 0 12px ${C2};
+                            z-index:23;pointer-events:none;
+                        `;
+                        overlay.appendChild(ring);
+                        ring.animate([
+                            {transform:'translate(-50%,-50%) scale(1)', opacity:0.7},
+                            {transform:'translate(-50%,-50%) scale(3.5)', opacity:0}
+                        ], {duration:2200, easing:'ease-out'}).onfinish = () => ring.remove();
+                    }, i * 380);
+                }
+
+                let irisAngle = 0;
+                const irisRotIv = setInterval(() => {
+                    irisAngle = (irisAngle + 0.12) % 360;
+                    iris.style.transform = `translate(-50%,-50%) rotate(${irisAngle}deg)`;
+                }, 16);
+
+                await sleep(2200);
+
+                const bangEl = document.createElement('div');
+                bangEl.style.cssText = `
+                    position:absolute;top:50%;left:-22%;
+                    font-size:clamp(60px,9vw,110px);font-weight:900;
+                    color:${C3};text-shadow:0 0 40px ${C3},0 0 80px ${C2};
+                    transform:translateY(-50%);z-index:30;
+                    white-space:nowrap;pointer-events:none;
+                `;
+                bangEl.textContent = '『!』';
+                overlay.appendChild(bangEl);
+
+                const questEl = document.createElement('div');
+                questEl.style.cssText = `
+                    position:absolute;top:50%;right:-22%;
+                    font-size:clamp(60px,9vw,110px);font-weight:900;
+                    color:${C3};text-shadow:0 0 40px ${C3},0 0 80px ${C2};
+                    transform:translateY(-50%);z-index:30;
+                    white-space:nowrap;pointer-events:none;
+                `;
+                questEl.textContent = '『?』';
+                overlay.appendChild(questEl);
+
+                bangEl.animate([{left:'-22%'},{left:'12%'}],  {duration:500, fill:'forwards', easing:'cubic-bezier(0.2,0,0.1,1)'});
+                questEl.animate([{right:'-22%'},{right:'12%'}], {duration:500, fill:'forwards', easing:'cubic-bezier(0.2,0,0.1,1)'});
+                await sleep(500);
+                flashScreen(overlay); await sleep(300);
+                flashScreen(overlay); await sleep(300);
+                bangEl.remove(); questEl.remove();
+
+                for (let i = 0; i < 4; i++) { flashScreen(overlay); await sleep(130); }
+                clearInterval(irisRotIv);
+
+                for (let i = 0; i < 60; i++) {
+                    const sh = document.createElement('div');
+                    const isIrisShard = Math.random() > 0.45;
+                    sh.style.cssText = `
+                        position:absolute;left:50%;top:50%;
+                        width:${Math.random()*55+8}px;height:${Math.random()*7+2}px;
+                        background:${isIrisShard ? C2 : C1};
+                        box-shadow:0 0 ${isIrisShard?22:10}px ${isIrisShard?C2:C3};
+                        border-radius:${Math.random()>0.5?2:Math.floor(Math.random()*6)}px;
+                        z-index:33;pointer-events:none;
+                    `;
+                    overlay.appendChild(sh);
+                    const ang = Math.random()*Math.PI*2;
+                    const dist = 180+Math.random()*700;
+                    const rot  = Math.random()*900-450;
+                    sh.animate([
+                        {transform:`translate(-50%,-50%) rotate(0deg) scale(1)`, opacity:1},
+                        {transform:`translate(calc(-50% + ${Math.cos(ang)*dist}px), calc(-50% + ${Math.sin(ang)*dist}px)) rotate(${rot}deg) scale(0.2)`, opacity:0}
+                    ], {duration:1100+Math.random()*900, easing:'cubic-bezier(0.1,0.8,0.2,1)'}).onfinish = () => sh.remove();
+                }
+                eyeWrap.remove(); eyeAura.remove(); vig.remove();
+                overlay.style.background = '#000';
+                await sleep(900);
+
+                const letters = ['H','E',' ','K','N','O','W','S'];
+                const letWrap = document.createElement('div');
+                letWrap.style.cssText = `
+                    position:absolute;left:50%;top:40%;
+                    transform:translate(-50%,-50%);
+                    display:flex;align-items:center;justify-content:center;
+                    gap:0.08em;z-index:35;pointer-events:none;
+                    font-size:clamp(40px,8.5vw,108px);
+                    font-weight:900;letter-spacing:0.05em;
+                `;
+                overlay.appendChild(letWrap);
+
+                for (let i = 0; i < letters.length; i++) {
+                    const ch = letters[i];
+                    if (ch === ' ') {
+                        await sleep(180);
+                        const sp = document.createElement('span');
+                        sp.style.cssText = 'display:inline-block;width:0.35em;';
+                        letWrap.appendChild(sp);
+                        continue;
+                    }
+                    await sleep(340);
+                    const span = document.createElement('span');
+                    span.textContent = ch;
+                    span.style.cssText = `
+                        display:inline-block;
+                        color:${C1};
+                        text-shadow:0 0 30px ${C1}, 0 0 70px ${C2}, 0 0 120px ${C2}44;
+                        opacity:0;transform:translateY(-120px) scale(1.8);
+                    `;
+                    letWrap.appendChild(span);
+                    span.animate([
+                        {transform:'translateY(-120px) scale(1.8)', opacity:0},
+                        {transform:'translateY(8px) scale(0.9)',    opacity:1},
+                        {transform:'translateY(0)    scale(1)',     opacity:1}
+                    ], {duration:280, fill:'forwards', easing:'cubic-bezier(0.1,0,0.2,1)'});
+                    flashScreen(overlay);
+
+                    const sw = document.createElement('div');
+                    sw.style.cssText = `
+                        position:absolute;left:50%;top:40%;
+                        width:10px;height:10px;
+                        border:3px solid ${C1};border-radius:50%;
+                        transform:translate(-50%,-50%);
+                        z-index:34;pointer-events:none;opacity:0.9;
+                    `;
+                    overlay.appendChild(sw);
+                    sw.animate([
+                        {width:'10px',height:'10px',opacity:0.9},
+                        {width:'420px',height:'420px',opacity:0}
+                    ], {duration:700,easing:'ease-out'}).onfinish = () => sw.remove();
+
+                    for (let s = 0; s < 8; s++) {
+                        const sk = document.createElement('div');
+                        sk.style.cssText = `
+                            position:absolute;left:50%;top:40%;
+                            width:4px;height:4px;border-radius:50%;
+                            background:${C3};box-shadow:0 0 8px ${C2};
+                            z-index:34;pointer-events:none;
+                        `;
+                        overlay.appendChild(sk);
+                        const sa = Math.random()*Math.PI*2;
+                        const sd = 40+Math.random()*120;
+                        sk.animate([
+                            {transform:'translate(-50%,-50%)', opacity:1},
+                            {transform:`translate(calc(-50% + ${Math.cos(sa)*sd}px),calc(-50% + ${Math.sin(sa)*sd}px))`, opacity:0}
+                        ], {duration:400+Math.random()*300, easing:'ease-out'}).onfinish = () => sk.remove();
+                    }
+                }
+
+                await sleep(1000);
+
+                const rainSymbols = ['『!』','『?』','!','?','⸮','¿','‽','⁇'];
+                const heRainIv = setInterval(() => {
+                    const sym = document.createElement('div');
+                    sym.style.cssText = `
+                        position:absolute;
+                        left:${Math.random()*100}%;top:-70px;
+                        font-size:${Math.random()*48+16}px;font-weight:900;
+                        color:${Math.random()>0.4?C3:C2};
+                        text-shadow:0 0 14px ${C2};
+                        opacity:${0.15+Math.random()*0.55};
+                        z-index:5;pointer-events:none;
+                    `;
+                    sym.textContent = rainSymbols[Math.floor(Math.random()*rainSymbols.length)];
+                    overlay.appendChild(sym);
+                    sym.animate([
+                        {transform:'translateY(0) rotate(0deg)', opacity:parseFloat(sym.style.opacity)},
+                        {transform:`translateY(${window.innerHeight+80}px) rotate(${Math.random()*360-180}deg)`, opacity:0}
+                    ], {duration:2000+Math.random()*2500, easing:'ease-in'}).onfinish = () => sym.remove();
+                }, 55);
+
+                overlay.style.animation  = 'heavyShake 1.8s cubic-bezier(.36,.07,.19,.97)';
+                overlay.style.background = `radial-gradient(circle at center, ${C2}55 0%, #000014 70%)`;
+
+                createCSParticles(overlay, C1, 700);
+                createCSParticles(overlay, C2, 400);
+                createCSParticles(overlay, C3, 200);
+                createCSRays(overlay, C1);
+
+                for (let i = 0; i < 6; i++) setTimeout(() => flashScreen(overlay), i * 180);
+
+                await sleep(2200);
+                letWrap.remove();
+
+                overlay.heRainIv = heRainIv;
+                setTimeout(() => clearInterval(heRainIv), 10000);
+
+            } else if (isID100) {
                 star.animate([
                     { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1 },
                     { transform: 'translate(-50%, -50%) scale(1.2)', opacity: 0 }
@@ -1128,6 +1740,305 @@ if (isID87) {
 
                 overlay.rainInterval = rainInterval;
                 overlay.stopRainTimeout = stopRainLater;
+
+            } else if (isQuestionGroup) {
+
+                const isAsk    = tId === 98;
+                const qPrimary = isAsk ? '#7ec8e3' : '#ffd580';
+                const qAccent  = isAsk ? '#b0e0ff' : '#ffaa33';
+
+                star.animate([{ opacity: 1, transform: 'translate(-50%,-50%) scale(1.5)' },
+                               { opacity: 0, transform: 'translate(-50%,-50%) scale(0.5)' }],
+                    { duration: 500, fill: 'forwards' });
+                await sleep(500);
+                star.remove();
+
+                overlay.style.background = `radial-gradient(circle at center, ${qPrimary}22 0%, #000 80%)`;
+
+                const qGlyphs = ['?','⸮','¿','‽','？','⁇','⁈','⁉'];
+                const vortexEls = [];
+                for (let i = 0; i < 50; i++) {
+                    const el = document.createElement('div');
+                    el.style.position   = 'absolute';
+                    el.style.left       = '50%';
+                    el.style.top        = '50%';
+                    el.style.fontSize   = (Math.random() * 42 + 14) + 'px';
+                    el.style.fontWeight = '900';
+                    el.style.color      = Math.random() > 0.5 ? qPrimary : qAccent;
+                    el.style.textShadow = `0 0 12px ${qPrimary}`;
+                    el.style.zIndex     = '8';
+                    el.style.pointerEvents = 'none';
+                    el.style.willChange = 'transform, opacity';
+                    el.textContent      = qGlyphs[Math.floor(Math.random() * qGlyphs.length)];
+                    overlay.appendChild(el);
+                    vortexEls.push(el);
+
+                    const radius     = 80 + Math.random() * 280;
+                    const startAngle = (i / 50) * 360;
+                    const rad0       = startAngle * Math.PI / 180;
+                    const spinSign   = isAsk ? 1 : -1;
+                    const x0 = Math.cos(rad0) * radius;
+                    const y0 = Math.sin(rad0) * radius;
+
+                    if (isAsk) {
+                        el.animate([
+                            { transform: `translate(calc(${x0}px - 50%), calc(${y0}px - 50%)) rotate(0deg) scale(1.2)`, opacity: 0.9 },
+                            { transform: `translate(-50%, -50%) rotate(720deg) scale(0)`, opacity: 0 }
+                        ], { duration: 2800, easing: 'ease-in', delay: i * 25, fill: 'forwards' });
+                    } else {
+                        el.animate([
+                            { transform: `translate(-50%, -50%) rotate(0deg) scale(0)`, opacity: 0 },
+                            { transform: `translate(calc(${x0}px - 50%), calc(${y0}px - 50%)) rotate(-720deg) scale(1)`, opacity: 0.85 }
+                        ], { duration: 2800, easing: 'ease-out', delay: i * 25, fill: 'forwards' });
+                    }
+                }
+
+                await sleep(1800);
+                flashScreen(overlay); await sleep(400);
+                flashScreen(overlay); await sleep(600);
+
+                createCSParticles(overlay, qPrimary, 250);
+                createCSParticles(overlay, qAccent, 120);
+                createCSRays(overlay, qPrimary);
+                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}55 0%, #000 80%)`;
+                overlay.style.animation  = 'heavyShake 1.5s cubic-bezier(.36,.07,.19,.97)';
+                await sleep(1200);
+                vortexEls.forEach(el => el.remove());
+
+            } else if (isGrowthGroup) {
+
+                star.animate([{ opacity: 1, transform: 'translate(-50%,-50%) scale(1.5)' },
+                               { opacity: 0, transform: 'translate(-50%,-50%) scale(3)' }],
+                    { duration: 600, fill: 'forwards' });
+                await sleep(600);
+                star.remove();
+
+                const runeSymbols = ['α','β','γ','δ','ε','ζ','η','θ','λ','μ','π','σ','Σ','Ω','∞','√','∂','∇','∈','∀','∃','⊕','⊗','✦','◈','⟡','★','◆','▲','⬡','⟢','⟣','𓆩','𓆪','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T'];
+                const runeEls = [];
+                const runeIvs = [];
+
+                for (let i = 0; i < 48; i++) {
+                    const rEl = document.createElement('div');
+                    rEl.style.cssText = `
+                        position:absolute;left:50%;top:50%;
+                        font-size:${(Math.random()*22+10)}px;
+                        font-weight:bold;color:${rarity.color};
+                        text-shadow:0 0 8px ${rarity.color},0 0 20px ${rarity.color};
+                        z-index:8;pointer-events:none;opacity:0;will-change:transform;
+                    `;
+                    rEl.textContent = runeSymbols[Math.floor(Math.random() * runeSymbols.length)];
+                    overlay.appendChild(rEl);
+                    runeEls.push(rEl);
+
+                    const orbitR = 60 + Math.random() * 230;
+                    const speed  = 0.4 + Math.random() * 1.2;
+                    let   ang    = Math.random() * 360;
+
+                    setTimeout(() => {
+                        rEl.style.opacity = '0.85';
+                        const iv = setInterval(() => {
+                            ang = (ang + speed) % 360;
+                            const r = ang * Math.PI / 180;
+                            rEl.style.transform = `translate(calc(${Math.cos(r)*orbitR}px - 50%), calc(${Math.sin(r)*orbitR}px - 50%))`;
+                        }, 16);
+                        runeIvs.push(iv);
+                    }, i * 40);
+                }
+
+                const aura = document.createElement('div');
+                aura.style.cssText = `
+                    position:absolute;left:50%;top:50%;
+                    width:0;height:0;border-radius:50%;
+                    background:radial-gradient(circle, ${rarity.color}88 0%, transparent 70%);
+                    transform:translate(-50%,-50%);
+                    box-shadow:0 0 60px ${rarity.color};
+                    z-index:7;pointer-events:none;
+                `;
+                overlay.appendChild(aura);
+                aura.animate([{width:'0px',height:'0px',opacity:0},{width:'320px',height:'320px',opacity:0.7}],
+                    {duration:2000, fill:'forwards', easing:'ease-in'});
+
+                await sleep(2200);
+                for (let i = 0; i < 2; i++) { flashScreen(overlay); await sleep(250); }
+
+                createCSParticles(overlay, rarity.color, 350);
+                createCSRays(overlay, rarity.color);
+                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}66 0%, #000 80%)`;
+                overlay.style.animation  = 'heavyShake 1.2s cubic-bezier(.36,.07,.19,.97)';
+                await sleep(900);
+
+                runeIvs.forEach(iv => clearInterval(iv));
+                runeEls.forEach(el => el.remove());
+                aura.remove();
+
+            } else if (isGriefGroup) {
+
+                star.animate([{ opacity: 1 }, { opacity: 0 }],
+                    { duration: 900, fill: 'forwards', easing: 'ease-in' });
+                await sleep(900);
+                star.remove();
+
+                const fogEls = [];
+                for (let i = 0; i < 7; i++) {
+                    const fog = document.createElement('div');
+                    const w   = 60 + Math.random() * 90;
+                    const lft = Math.random() * (100 - w);
+                    fog.style.cssText = `
+                        position:absolute;bottom:-10%;left:${lft}%;
+                        width:${w}%;height:${35+Math.random()*30}%;
+                        background:radial-gradient(ellipse at 50% 80%, ${rarity.color}30 0%, transparent 70%);
+                        border-radius:50%;filter:blur(${20+Math.random()*25}px);
+                        z-index:5;pointer-events:none;opacity:0;
+                    `;
+                    overlay.appendChild(fog);
+                    fogEls.push(fog);
+                    fog.animate([
+                        { bottom:'-10%', opacity:0 },
+                        { bottom:`${20+i*8}%`, opacity:0.7 },
+                        { bottom:`${50+i*8}%`, opacity:0 }
+                    ], { duration:3000+i*300, easing:'ease-out', delay:i*200, fill:'forwards' });
+                }
+
+                for (let i = 0; i < 35; i++) {
+                    setTimeout(() => {
+                        const s   = document.createElement('div');
+                        const big = Math.random() > 0.65;
+                        const rot = Math.random() * 360;
+                        s.style.cssText = `
+                            position:absolute;
+                            left:${5+Math.random()*90}%;bottom:-5%;
+                            width:${big?Math.random()*8+4:Math.random()*3+1}px;
+                            height:${big?Math.random()*24+10:Math.random()*6+3}px;
+                            background:${rarity.color};
+                            box-shadow:0 0 ${big?12:6}px ${rarity.color};
+                            border-radius:${big?2:50}%;
+                            z-index:9;pointer-events:none;opacity:0;
+                        `;
+                        overlay.appendChild(s);
+                        s.animate([
+                            { bottom:'-5%', transform:`rotate(0deg)`, opacity:0 },
+                            { bottom:`${25+Math.random()*55}%`, opacity:0.9, transform:`rotate(${rot*0.5}deg)` },
+                            { bottom:`${65+Math.random()*25}%`, opacity:0, transform:`rotate(${rot}deg)` }
+                        ], { duration:2200+Math.random()*1800, easing:'ease-out', fill:'forwards' })
+                         .onfinish = () => s.remove();
+                    }, i * 60);
+                }
+
+                await sleep(2200);
+                flashScreen(overlay);
+                createCSParticles(overlay, rarity.color, 300);
+                createCSRays(overlay, rarity.color);
+                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}44 0%, #000 80%)`;
+                overlay.style.animation  = 'heavyShake 1.2s cubic-bezier(.36,.07,.19,.97)';
+                await sleep(900);
+                fogEls.forEach(el => el.remove());
+
+            } else if (isMorality) {
+
+                const toLive = tId === 87;
+                const clrL   = toLive ? '#ffffff' : '#1c1c2e';
+                const clrR   = toLive ? '#C8CAE9' : '#FDFBDE';
+                const glowL  = toLive ? '#ffffff' : '#6666aa';
+                const glowR  = toLive ? '#aab8ff' : '#ffffcc';
+
+                star.animate([{ opacity:1, transform:'translate(-50%,-50%) scale(1.5)' },
+                               { opacity:0, transform:'translate(-50%,-50%) scale(0.8)' }],
+                    { duration:500, fill:'forwards' });
+                await sleep(500);
+                star.remove();
+
+                const bg2 = document.createElement('div');
+                bg2.style.cssText = `
+                    position:absolute;top:0;left:0;width:100%;height:100%;
+                    background:linear-gradient(90deg, ${toLive?'#050510':'#131300'} 50%, ${toLive?'#131300':'#050510'} 50%);
+                    z-index:4;pointer-events:none;opacity:0;
+                `;
+                overlay.appendChild(bg2);
+                bg2.animate([{opacity:0},{opacity:1}], {duration:350, fill:'forwards'});
+                await sleep(350);
+
+                const div = document.createElement('div');
+                div.style.cssText = `
+                    position:absolute;left:50%;top:0;width:2px;height:100%;
+                    background:linear-gradient(180deg,transparent,#fff 20%,#fff 80%,transparent);
+                    box-shadow:0 0 20px #fff,0 0 40px #fff;
+                    transform:translateX(-50%);z-index:6;pointer-events:none;opacity:0.6;
+                `;
+                overlay.appendChild(div);
+
+                const sL = document.createElement('div');
+                sL.style.cssText = `
+                    position:absolute;top:50%;left:-65%;
+                    width:65%;height:14px;
+                    background:linear-gradient(90deg, transparent 0%, ${clrL} 100%);
+                    box-shadow:0 0 50px ${glowL},0 0 100px ${glowL};
+                    border-radius:0 7px 7px 0;transform:translateY(-50%);z-index:10;
+                `;
+                overlay.appendChild(sL);
+
+                const sR = document.createElement('div');
+                sR.style.cssText = `
+                    position:absolute;top:50%;right:-65%;
+                    width:65%;height:14px;
+                    background:linear-gradient(270deg, transparent 0%, ${clrR} 100%);
+                    box-shadow:0 0 50px ${glowR},0 0 100px ${glowR};
+                    border-radius:7px 0 0 7px;transform:translateY(-50%);z-index:10;
+                `;
+                overlay.appendChild(sR);
+
+                const tivL = setInterval(() => {
+                    const rect = sL.getBoundingClientRect();
+                    const pct  = (rect.right / window.innerWidth) * 100;
+                    const tp   = document.createElement('div');
+                    tp.style.cssText = `position:absolute;left:${pct}%;top:50%;width:10px;height:10px;border-radius:50%;background:${clrL};box-shadow:0 0 15px ${glowL};z-index:9;pointer-events:none;`;
+                    overlay.appendChild(tp);
+                    tp.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:0.8},{transform:'translate(-50%,-50%) scale(0)',opacity:0}],
+                        {duration:400,easing:'ease-out'}).onfinish = () => tp.remove();
+                }, 60);
+                const tivR = setInterval(() => {
+                    const rect = sR.getBoundingClientRect();
+                    const pct  = (rect.left / window.innerWidth) * 100;
+                    const tp   = document.createElement('div');
+                    tp.style.cssText = `position:absolute;left:${pct}%;top:50%;width:10px;height:10px;border-radius:50%;background:${clrR};box-shadow:0 0 15px ${glowR};z-index:9;pointer-events:none;`;
+                    overlay.appendChild(tp);
+                    tp.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:0.8},{transform:'translate(-50%,-50%) scale(0)',opacity:0}],
+                        {duration:400,easing:'ease-out'}).onfinish = () => tp.remove();
+                }, 60);
+
+                sL.animate([{left:'-65%'},{left:'50%'}],  {duration:1800,fill:'forwards',easing:'cubic-bezier(0.4,0,0.8,1)'});
+                sR.animate([{right:'-65%'},{right:'50%'}], {duration:1800,fill:'forwards',easing:'cubic-bezier(0.4,0,0.8,1)'});
+                await sleep(1800);
+                clearInterval(tivL); clearInterval(tivR);
+                sL.remove(); sR.remove(); bg2.remove(); div.remove();
+
+                for (let i = 0; i < 3; i++) { flashScreen(overlay); await sleep(180); }
+
+                for (let i = 0; i < 40; i++) {
+                    const sh   = document.createElement('div');
+                    const pale = Math.random() > 0.5;
+                    sh.style.cssText = `
+                        position:absolute;left:50%;top:50%;
+                        width:${Math.random()*80+10}px;height:${Math.random()*6+2}px;
+                        background:${pale?clrL:clrR};
+                        box-shadow:0 0 18px ${pale?glowL:glowR};
+                        border-radius:2px;z-index:12;pointer-events:none;
+                    `;
+                    overlay.appendChild(sh);
+                    const ang  = Math.random() * Math.PI * 2;
+                    const dist = 150 + Math.random() * 500;
+                    const rot  = Math.random() * 720 - 360;
+                    sh.animate([
+                        {transform:`translate(-50%,-50%) rotate(0deg)`, opacity:1},
+                        {transform:`translate(calc(-50% + ${Math.cos(ang)*dist}px), calc(-50% + ${Math.sin(ang)*dist}px)) rotate(${rot}deg)`, opacity:0}
+                    ], {duration:1000+Math.random()*900, easing:'ease-out'}).onfinish = () => sh.remove();
+                }
+
+                createCSParticles(overlay, clrL, 220);
+                createCSParticles(overlay, clrR, 220);
+                createCSRays(overlay, toLive ? '#ffffff' : '#C8CAE9');
+                overlay.style.background = `radial-gradient(circle at center, ${rarity.color}66 0%, #000 80%)`;
+                overlay.style.animation  = 'heavyShake 1.5s cubic-bezier(.36,.07,.19,.97)';
+                await sleep(1100);
 
             } else if (isEpicTier) {
                 star.animate([
@@ -1243,7 +2154,19 @@ if (isHolyTier) {
             title.style.textShadow = `0 0 20px ${rarity.color}, 0 0 50px ${rarity.color}`;
             overlay.appendChild(title);
 
-            if (isID87) {
+            if (isID101) {
+                title.style.color      = '#e8eaff';
+                title.style.textShadow = '0 0 20px #e8eaff, 0 0 60px #aab4ff, 0 0 100px #6677ff44';
+                title.style.opacity    = '1';
+                title.style.transform  = 'translateY(0)';
+                await sleep(600);
+                const chars101 = [...rarity.name];
+                for (let i = 0; i < chars101.length; i++) {
+                    title.textContent += chars101[i];
+                    await sleep(110);
+                }
+                title.style.animation = 'float 2.5s ease-in-out infinite alternate, rainbowShift 5s linear infinite';
+            } else if (isID100) {
                 title.style.opacity = '1';
                 title.style.transform = 'translateY(0)';
                 await sleep(1000);
@@ -1279,10 +2202,14 @@ if (isHolyTier) {
                 title.style.animationDelay = '0s, 0.6s';
             }
 
-            let admireTime = isID87 ? 6000 : (isEpicTier ? 6000 : (t56 ? 5000 : 3500));
+            let admireTime = isID101 ? 9000 : (isID100 ? 6000 : (isEpicTier ? 6000 : (t56 ? 5000 : 3500)));
             await sleep(admireTime);
 
-            if (isID87) {
+            if (isID101 && overlay.heRainIv) {
+                clearInterval(overlay.heRainIv);
+            }
+
+            if (isID100) {
                 if (overlay.rainInterval) clearInterval(overlay.rainInterval);
                 if (overlay.stopRainTimeout) clearTimeout(overlay.stopRainTimeout);
             }
@@ -1499,10 +2426,51 @@ function buyPotion(type) {
 
     if (type === 14) {
         cost = 1e27;
+        multiplier = 20000000;
+        duration = 1200000;
+        name = "Mortal Blood";
+        statusEffect = "mortality";
+    }
+
+    if (type === 15) {
+        cost = 1e28;
         multiplier = 100000000;
-        duration = 600000;
+        duration = 2400000;
+        name = "Elixir of the Grieved";
+        statusEffect = "grief";
+    }
+
+    if (type === 16) {
+        cost = 2e29;
+        multiplier = 1000000000;
+        duration = 1800000;
+        name = "Tonic for the Mind";
+        statusEffect = "growth mindset";
+    }
+
+    if (type === 17) {
+        cost = 1e30;
+        multiplier = 10000000000;
+        duration = 1200000;
+        name = "Interrogation Serum";
+        statusEffect = "the question";
+    }
+
+    if (type === 18) {
+        cost = 1e32;
+        multiplier = 100000000000;
+        duration = 2400000;
         name = "Liquid of ???";
         statusEffect = "???";
+    }
+
+    if (type === 19) {
+        if (!state.heKnowsUnlocked) return;
+        cost = 1e36;
+        multiplier = 1e12;
+        duration = 300000;
+        name = "He Knows";
+        statusEffect = "to know";
     }
 
     if (state.points < cost) {
@@ -1622,6 +2590,9 @@ if (statusEffect) {
 
         function completePrestige(bonus) {
             const preservedName = state.playerName;
+            const id100thisRun = state.inventory[100] || 0;
+            const alreadyUnlocked = state.heKnowsUnlocked || false;
+            const nowUnlocked = alreadyUnlocked || (id100thisRun === 7);
             state = {
                 version: SAVE_VERSION,
                 inventory: {}, 
@@ -1635,6 +2606,7 @@ if (statusEffect) {
                 prestigeCount: (state.prestigeCount || 0) + 1,
                 totalRolls: state.totalRolls,
                 prestigeLuck: state.prestigeLuck + bonus,
+                heKnowsUnlocked: nowUnlocked,
             };
 
             potionMultiplier = 1;
@@ -1693,9 +2665,6 @@ function checkAndDisplayGlobalAnnounce() {
     }
     
     if (Date.now() >= nextGlobalAnnounceTime) {
-        const fakeUsers = [
-        "Guest_1902", "Guest_2321", "Guest_1850", "Guest_1284", "ShadowNinja", "ShadowNigga", "RNG_God", "NoobSlayer99", "LuckyDuck", "LuckyFuck", "bumcracker67", "naperiggerson", "EFN", "ERN", "diddysbumhole", "wemby'slittletwink", "CP_WATCHER", "Ray_Piste", "Peter_File", "MrCoolJr", "MrCoolSr", "Drake's_Fat_Dick", "gothmommycracker", "NiggaBeater", "WSpeed_Editz", "ILoveMinors", "StrongestIsraeliSoldier", "IDF_bootlicker", "Big_Yahu", "Jewish_City_Boy", "i_have_scat_fetish", "piss_drinking_4ever", "sweatyArmpitLicker", "I_touch_boys", "GreenNiggaGreen", "buttholelicker", "i_love_littleGirls", "4yo_fucker", "PencilUpMyUrethra", "i_love_buttholes", "NiggaPooper4000", "67buttplugs_up_my_ass", "Liggy", "swerxl", "i_eat_poop", "PissDrinker67", "67_aura_buttkisser", "NIGGERNIGGERNIGGER", "epstien's_returning_customer", "ISpent67MilOnPornhub", "Child_Pornographer", "touchingLittleBoysRN", "littleGirls_littlePussy", "leniggler", "iPegBoys", "StrapOnDildo", "BiggestButtplug", "CornyMasterBaiter67", "bigbrolignezh"
-        ];
         const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
         showAnnouncement(`[Global] ${user} rolled ${nextGlobalRarity.name}!`, nextGlobalRarity.color);
         
@@ -1732,6 +2701,9 @@ scheduleNextGlobalAnnounce();
             DOM.btnUpgrade.style.opacity = state.points >= cost ? '1' : '0.5';
 
             buildInventory();
+
+            const heKnowsBtn = document.getElementById('buy-he-knows');
+            if (heKnowsBtn) heKnowsBtn.style.display = state.heKnowsUnlocked ? '' : 'none';
         }
 
         function buildInventory() {
@@ -1910,7 +2882,7 @@ scheduleNextGlobalAnnounce();
         document.getElementById('btn-upgrade').addEventListener('click', () => {
             const cost = getUpgradeCost();
             if (state.points >= cost) {
-                state.points -= cost; state.luck += (1 + state.luckLevel * 0.25) * (state.prestigeLuck || 1); state.luckLevel += 1; saveData(); updateUI();
+                state.points -= cost; state.luck += (1 + state.luckLevel * 0.25) * (state.prestigeLuck / 2 || 1); state.luckLevel += 1; saveData(); updateUI();
                 const btn = document.getElementById('btn-upgrade');
                 btn.textContent = "UPGRADED!"; btn.style.background = "var(--accent)";
                 setTimeout(() => { btn.style.background = ""; updateUI(); }, 500);
@@ -1938,7 +2910,12 @@ scheduleNextGlobalAnnounce();
         document.getElementById("buy-eldritch").addEventListener("click", () => buyPotion(11));
         document.getElementById("buy-virtue").addEventListener("click", () => buyPotion(12));
         document.getElementById("buy-sin").addEventListener("click", () => buyPotion(13));
-        document.getElementById("buy-unknown").addEventListener("click", () => buyPotion(14));
+        document.getElementById("buy-mortal").addEventListener("click", () => buyPotion(14));
+        document.getElementById("buy-grief").addEventListener("click", () => buyPotion(15));
+        document.getElementById("buy-growth").addEventListener("click", () => buyPotion(16));
+        document.getElementById("buy-question").addEventListener("click", () => buyPotion(17));
+        document.getElementById("buy-unknown").addEventListener("click", () => buyPotion(18));
+        document.getElementById("buy-he-knows").addEventListener("click", () => buyPotion(19));
         document.getElementById('btn-save-name').addEventListener('click', () => {
             const input = document.getElementById('input-name').value.trim();
             if (input.length > 0 && input.length <= 32) {
@@ -1977,6 +2954,259 @@ scheduleNextGlobalAnnounce();
         resetSave();
         });
         document.getElementById('btn-prestige').addEventListener('click', triggerPrestige);
+
+
+        (function initChat() {
+            const wrapper  = document.getElementById('chat-wrapper');
+            const tab      = document.getElementById('chat-tab');
+            const messages = document.getElementById('chat-messages');
+            const input    = document.getElementById('chat-input');
+            const sendBtn  = document.getElementById('chat-send');
+
+            let typingIndicatorEl  = null;
+            let pendingBotTimeout  = null;
+            let pendingPreTimeout  = null; 
+            let isOpen = false;
+
+            function clampLeft(x) {
+                const half = wrapper.offsetWidth / 2;
+                return Math.max(half, Math.min(window.innerWidth - half, x));
+            }
+            function setWrapperX(cx) {
+                wrapper.style.left      = cx + 'px';
+                wrapper.style.transform = 'translateX(-50%)';
+            }
+            setWrapperX(window.innerWidth / 2);
+            window.addEventListener('resize', () => {
+                const cur = parseFloat(wrapper.style.left) || window.innerWidth / 2;
+                setWrapperX(clampLeft(cur));
+            });
+
+            let dragStartX    = 0;
+            let dragStartLeft = 0;
+            let didDrag       = false;
+
+            tab.addEventListener('mousedown', e => {
+                if (e.button !== 0) return;
+                dragStartX    = e.clientX;
+                dragStartLeft = parseFloat(wrapper.style.left) || window.innerWidth / 2;
+                didDrag       = false;
+
+                function onMouseMove(e) {
+                    const dx = e.clientX - dragStartX;
+                    if (!didDrag && Math.abs(dx) > 4) {
+                        didDrag = true;
+                        wrapper.classList.add('dragging');
+                    }
+                    if (didDrag) {
+                        setWrapperX(clampLeft(dragStartLeft + dx));
+                    }
+                }
+
+                function onMouseUp() {
+                    wrapper.classList.remove('dragging');
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            tab.addEventListener('touchstart', e => {
+                dragStartX    = e.touches[0].clientX;
+                dragStartLeft = parseFloat(wrapper.style.left) || window.innerWidth / 2;
+                didDrag       = false;
+            }, { passive: true });
+
+            tab.addEventListener('touchmove', e => {
+                const dx = e.touches[0].clientX - dragStartX;
+                if (!didDrag && Math.abs(dx) > 4) didDrag = true;
+                if (didDrag) setWrapperX(clampLeft(dragStartLeft + dx));
+            }, { passive: true });
+
+            tab.addEventListener('click', () => {
+                if (didDrag) return;
+                isOpen = !isOpen;
+                wrapper.classList.toggle('open', isOpen);
+            });
+
+            function addMessage(username, text, type) {
+                const div = document.createElement('div');
+                div.className = `chat-msg chat-${type}`;
+
+                if (type === 'system') {
+                    div.textContent = text;
+                } else {
+                    const userSpan = document.createElement('span');
+                    userSpan.className = 'chat-user';
+                    userSpan.textContent = username + ':';
+
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'chat-text';
+                    textSpan.textContent = ' ' + text;
+
+                    div.appendChild(userSpan);
+                    div.appendChild(textSpan);
+                }
+
+            messages.appendChild(div);
+            const allMsgs = messages.querySelectorAll('.chat-msg');
+            if (allMsgs.length > 40) {
+                for (let i = 0; i < allMsgs.length - 40; i++) {
+                    allMsgs[i].remove();
+                }
+            }
+            messages.scrollTop = messages.scrollHeight;
+            return div;
+            }
+
+            function showTyping(username) {
+                removeTyping();
+                const div = document.createElement('div');
+                div.className = 'chat-msg chat-bot';
+
+                const userSpan = document.createElement('span');
+                userSpan.className = 'chat-user';
+                userSpan.textContent = username + ':';
+
+                const dots = document.createElement('span');
+                dots.className = 'chat-typing-indicator';
+                dots.innerHTML = '<span></span><span></span><span></span>';
+
+                div.appendChild(userSpan);
+                div.appendChild(dots);
+                messages.appendChild(div);
+                messages.scrollTop = messages.scrollHeight;
+                typingIndicatorEl = div;
+            }
+
+            function removeTyping() {
+                if (typingIndicatorEl) { typingIndicatorEl.remove(); typingIndicatorEl = null; }
+            }
+
+            function randomBot() {
+                return fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+            }
+
+            function pickResponse(text) {
+                const lower = text.toLowerCase();
+                for (const trigger of CHAT_TRIGGERS) {
+                    if (trigger.keywords.some(kw => new RegExp(`(?<![a-z])${kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z])`, 'i').test(lower))) {
+                        const pool = trigger.responses;
+                        return pool[Math.floor(Math.random() * pool.length)];
+                    }
+                }
+                return CHAT_AMBIENT[Math.floor(Math.random() * CHAT_AMBIENT.length)];
+            }
+
+            function sendMessage() {
+                const text = input.value.trim();
+                if (!text) return;
+                input.value = '';
+
+                const playerName = (typeof state !== 'undefined' && state.playerName)
+                    ? state.playerName : 'You';
+                addMessage(playerName, text, 'self');
+
+                if (pendingPreTimeout)  clearTimeout(pendingPreTimeout);
+                if (pendingBotTimeout)  clearTimeout(pendingBotTimeout);
+                removeTyping();
+
+                const botName  = randomBot();
+                const response = pickResponse(text);
+
+                const preDelay    = 1000 + Math.random() * 2000;
+                const typingDelay = 1000 + Math.random() * 1000;
+
+                pendingPreTimeout = setTimeout(() => {
+                    showTyping(botName);
+
+                    pendingBotTimeout = setTimeout(() => {
+                        removeTyping();
+                        addMessage(botName, response, 'bot');
+                        pendingBotTimeout = null;
+                    }, typingDelay);
+
+                    pendingPreTimeout = null;
+                }, preDelay);
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+
+            function sendAmbient() {
+                const bot  = randomBot();
+                const text = CHAT_AMBIENT[Math.floor(Math.random() * CHAT_AMBIENT.length)];
+                const typingDelay = 800 + Math.random() * 1200;
+                showTyping(bot);
+                setTimeout(() => {
+                    removeTyping();
+                    addMessage(bot, text, 'bot');
+                }, typingDelay);
+            }
+
+            setTimeout(() => { sendAmbient(); }, Math.random * 2400);
+            setTimeout(() => { sendAmbient(); }, Math.random * 11000);
+
+            function scheduleNextAmbient() {
+                const delay = 20000 + Math.random() * 50000;
+                setTimeout(() => {
+                    sendAmbient();
+                    scheduleNextAmbient();
+                }, delay);
+            }
+            scheduleNextAmbient();
+
+            let convoBusy = false;
+
+            function playConversation(convo) {
+                if (convoBusy) return;
+                convoBusy = true;
+
+                const shuffled = [...fakeUsers].sort(() => Math.random() - 0.5);
+                const cast = shuffled.slice(0, convo.speakers);
+
+                let i = 0;
+                function nextMsg() {
+                    if (i >= convo.messages.length) {
+                        convoBusy = false;
+                        scheduleNextConversation();
+                        return;
+                    }
+                    const msg     = convo.messages[i++];
+                    const botName = cast[msg.speaker];
+                    const [lo, hi] = convo.gapMs;
+                    const gap      = lo + Math.random() * (hi - lo);
+                    const typing   = 700 + Math.random() * 1100;
+
+                    setTimeout(() => {
+                        showTyping(botName);
+                        setTimeout(() => {
+                            removeTyping();
+                            addMessage(botName, msg.text, 'bot');
+                            nextMsg();
+                        }, typing);
+                    }, gap);
+                }
+                nextMsg();
+            }
+
+            function scheduleNextConversation() {
+                const delay = 50000 + Math.random() * 90000;
+                setTimeout(() => {
+                    const convo = BOT_CONVERSATIONS[Math.floor(Math.random() * BOT_CONVERSATIONS.length)];
+                    playConversation(convo);
+                }, delay);
+            }
+
+            setTimeout(() => {
+                const convo = BOT_CONVERSATIONS[Math.floor(Math.random() * BOT_CONVERSATIONS.length)];
+                playConversation(convo);
+            }, 15000 + Math.random() * 20000);
+
+        })();
+
         initDOM();
         loadData();
 
