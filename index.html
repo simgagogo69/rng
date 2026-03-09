@@ -291,7 +291,6 @@
 
         @keyframes csFlashAnim { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* === GROUP 1: MORALITY === */
         @keyframes streamSlideL {
             0%   { transform: translateY(-50%) translateX(0); opacity: 1; }
             100% { transform: translateY(-50%) translateX(100%); opacity: 1; }
@@ -305,7 +304,6 @@
             100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
         }
 
-        /* === GROUP 2: GRIEF === */
         @keyframes fogFloat {
             0%   { transform: translateY(0px) scaleX(1);   opacity: 0; }
             30%  { opacity: 0.55; }
@@ -317,14 +315,12 @@
             100% { transform: translateY(-200px) rotate(var(--shard-rot)); opacity: 0; }
         }
 
-        /* === GROUP 3: LEARNING === */
         @keyframes runeConverge {
             0%   { opacity: 0; transform: translate(var(--rx), var(--ry)) scale(1.2); }
             30%  { opacity: 0.9; }
             100% { opacity: 0;  transform: translate(0px, 0px) scale(0); }
         }
 
-        /* === GROUP 4: QUESTIONS === */
         @keyframes qSpinIn {
             0%   { transform: translate(var(--qx), var(--qy)) rotate(0deg)   scale(1.2); opacity: 0.85; }
             100% { transform: translate(0px, 0px)              rotate(var(--qr)) scale(0);   opacity: 0; }
@@ -423,13 +419,10 @@
     background: lime;
     transition: width 0.1s linear;
 }
-        /* ═══════════════════════════════════════
-           GLOBAL CHAT PULLDOWN
-        ═══════════════════════════════════════ */
+
         #chat-wrapper {
             position: fixed;
             top: 0;
-            /* left is set dynamically by JS on init */
             z-index: 4000;
             display: flex;
             flex-direction: column;
@@ -481,7 +474,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            /* slide animation */
             max-height: 0;
             opacity: 0;
             transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
@@ -645,7 +637,6 @@
     <div id="global-announcement"></div>
     <div id="tooltip" class="tooltip"></div>
 
-    <!-- ═══ GLOBAL CHAT PULLDOWN ═══ -->
     <div id="chat-wrapper">
         <div id="chat-tab">
             <span>💬 Global Chat</span>
@@ -660,7 +651,6 @@
         </div>
     </div>
 
-    <!-- Inspect Modal -->
     <div id="inspect-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" id="btn-close-modal">&times;</button>
@@ -672,7 +662,6 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
     <div id="settings-modal" class="modal-overlay">
         <div class="modal-content" style="width: 400px; align-items: flex-start;">
             <button class="modal-close" id="btn-close-settings">&times;</button>
@@ -707,7 +696,6 @@
             </div>
         </div>
     </div>
-<!-- Shop Modal -->
     <div id="shop-modal" class="modal-overlay">
         <div class="modal-content" style="width: 420px; align-items: flex-start;">
             <button class="modal-close" id="btn-close-shop">&times;</button>
@@ -831,7 +819,6 @@
 </div>
         </div>
     </div>
-    <!-- Game Popup Modal -->
 <div id="game-popup" class="modal-overlay">
     <div class="modal-content" style="width: 400px; text-align: center;">
         <h3 id="popup-message" style="margin-bottom: 1.5rem;"></h3>
@@ -1007,6 +994,7 @@
             'HUGGILYNIGGA': 3.9e27,
             'GLOBALCHAT': 1e27,
             'SECRETWAIFU': 1e27,
+            'SIMGASCIENCE': 2e28,
             'BADPRESTIGE': 67
         };
         const SAVE_VERSION = 3;
