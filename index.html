@@ -417,7 +417,6 @@
     height: 100%;
     width: 0%;
     background: lime;
-    transition: width 0.1s linear;
 }
 
         #chat-wrapper {
@@ -768,6 +767,7 @@
                     <span class="desc">Grants <span style="color:#d52b00;">"Misanthropic Mind"</span> and 10M× Luck for 3m (Cost: 100Sp)</span>
                 </div>
 
+                //checkpoint
                 <div class="btn-upgrade" id="buy-mortal">
                     👤 Mortal Blood<br>
                     <span class="desc">Grants <span style="color:#D8BFAA;">"Mortality"</span> and 20M× Luck for 2m (Cost: 1Oc)</span>
@@ -775,27 +775,27 @@
 
                 <div class="btn-upgrade" id="buy-grief">
                     🖤 Elixir of the Grieved<br>
-                    <span class="desc">Grants <span style="color:#A29FA5;">"Grief"</span> and 100M× Luck for 4m (Cost: 10Oc)</span>
+                    <span class="desc">Grants <span style="color:#A29FA5;">"Grief"</span> and 500M× Luck for 4m (Cost: 10Oc)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-growth">
                     🧠 Tonic for the Mind<br>
-                    <span class="desc">Grants <span style="color:#4CAF50;">"Growth Mindset"</span> and 1B× Luck for 3m (Cost: 200Oc)</span>
+                    <span class="desc">Grants <span style="color:#4CAF50;">"Growth Mindset"</span> and 5B× Luck for 3m (Cost: 200Oc)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-question">
                     🌀 Interrogation Serum<br>
-                    <span class="desc">Grants <span style="color:#5D4EFA;">"The Question"</span> and 10B× Luck for 2m (Cost: 1No)</span>
+                    <span class="desc">Grants <span style="color:#5D4EFA;">"The Question"</span> and 50B× Luck for 2m (Cost: 1No)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-unknown">
                     ❓ Liquid of ???<br>
-                    <span class="desc">Grants <span style="color:#ffffff;">"???"</span> and 100B× Luck for 4m (Cost: 100No)</span>
+                    <span class="desc">Grants <span style="color:#ffffff;">"???"</span> and 1T× Luck for 4m (Cost: 100No)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-he-knows" style="display:none; border: 1px solid #aab4ff55; box-shadow: 0 0 18px #aab4ff33;">
                     👁️ <span style="color:#e8eaff; font-weight:900;">He Knows</span><br>
-                    <span class="desc">Grants <span style="color:#e8eaff; text-shadow:0 0 8px #aab4ff;">"to know"</span> and 1T× Luck for 5m (Cost: 1UnD)</span>
+                    <span class="desc">Grants <span style="color:#e8eaff; text-shadow:0 0 8px #aab4ff;">"to know"</span> and 10T× Luck for 5m (Cost: 1UnD)</span>
                 </div>
             </div>
 
@@ -814,7 +814,6 @@
         height: 100%;
         width: 0%;
         background: lime;
-        transition: width 0.1s linear;
     "></div>
 </div>
         </div>
@@ -943,7 +942,7 @@
             { id: 85, name: "〖 ✺ 𝐈𝐑𝐀 ✺ 〗", img: "ira", odds: 1e17, color: "#A92C2E", effect: 7, val: 5e27, requiredStatus: "misanthropic mind"},
             { id: 86, name: "《 ⟢ 𝐒𝐔𝐏𝐄𝐑𝐁𝐈𝐀 ⟣ 》", img: "superbia", odds: 1e17, color: "#995479", effect: 7, val: 5e27, requiredStatus: "misanthropic mind"},
             { id: 87, name: "【 TO LIVE 】", img: "to_live", odds: 1e18, color: "#FDFBDE", effect: 7, val: 1e28, requiredStatus: "mortality"},
-            { id: 88, name: "〖 TO DIE 〗", img: "to_die", odds: 1e18, color: "#C8CAE9", effect: 7, val: 1e28, requiredStatus: "mortality"},
+            { id: 88, name: "〖 TO  DIE 〗", img: "to_die", odds: 1e18, color: "#C8CAE9", effect: 7, val: 1e28, requiredStatus: "mortality"},
             { id: 89, name: "『𝐃 𝐄 𝐍 𝐈 𝐀 𝐋』", img: "denial", odds: 1e19, color: "#FEFFE5", effect: 7, val: 1e29, requiredStatus: "grief"},
             { id: 90, name: "『𝑨 𝑵 𝑮 𝑬 𝑹』", img: "anger", odds: 1e20, color: "#B38593", effect: 7, val: 1e30, requiredStatus: "grief"},
             { id: 91, name: "『𝘉 𝘈 𝘙 𝘎 𝘈 𝘐 𝘕 𝘐 𝘕 𝘎』", img: "bargaining", odds: 2.5e20, color: "#FEFFE5", effect: 7, val: 2.5e30, requiredStatus: "grief"},
@@ -979,7 +978,7 @@
             "???": "#ffffff",
             "to know": "#e8eaff",
         };
-        let state = { inventory: {}, rolls: 0, points: 0, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0, prestigeLuck: 0, heKnowsUnlocked: false };
+        let state = { inventory: {}, rolls: 1, points: 1, luckLevel: 1, luck: 1, pity: 0, playerName: null, redeemedCodes: [], prestigeCount: 0, totalRolls: 0, prestigeLuck: 0, heKnowsUnlocked: false };
         const validCodes = {
             'RELEASE': 1000,
             'SIMGAGOGO69': 10000,
@@ -996,6 +995,7 @@
             'SECRETWAIFU': 1e27,
             'SIMGASCIENCE': 2e28,
             'ANUSLICKER': 1e29,
+            'SHITTER': 5e28,
             'BADPRESTIGE': 67
         };
         const SAVE_VERSION = 3;
@@ -1063,6 +1063,7 @@
                 _uiPending = true;
                 requestAnimationFrame(() => {
                     updateUI(_lastUIResult);
+                    animateStandardRoll();
                     _uiPending = false;
                 });
             }
@@ -1142,7 +1143,6 @@ function triggerRoll() {
     } else {
         scheduleUI(result);
         triggerEffects(result, isNewItem); 
-        animateStandardRoll();
     }
 }
 
@@ -2412,7 +2412,7 @@ function buyPotion(type) {
         name = "Tonic of Sins";
         statusEffect = "misanthropic mind";
     }
-
+//checkpoint
     if (type === 14) {
         cost = 1e27;
         multiplier = 20000000;
@@ -2423,7 +2423,7 @@ function buyPotion(type) {
 
     if (type === 15) {
         cost = 1e28;
-        multiplier = 100000000;
+        multiplier = 500000000;
         duration = 240000;
         name = "Elixir of the Grieved";
         statusEffect = "grief";
@@ -2431,7 +2431,7 @@ function buyPotion(type) {
 
     if (type === 16) {
         cost = 2e29;
-        multiplier = 1000000000;
+        multiplier = 5000000000;
         duration = 180000;
         name = "Tonic for the Mind";
         statusEffect = "growth mindset";
@@ -2439,7 +2439,7 @@ function buyPotion(type) {
 
     if (type === 17) {
         cost = 1e30;
-        multiplier = 10000000000;
+        multiplier = 50000000000;
         duration = 120000;
         name = "Interrogation Serum";
         statusEffect = "the question";
@@ -2447,7 +2447,7 @@ function buyPotion(type) {
 
     if (type === 18) {
         cost = 1e32;
-        multiplier = 100000000000;
+        multiplier = 1000000000000;
         duration = 240000;
         name = "Liquid of ???";
         statusEffect = "???";
@@ -2527,17 +2527,21 @@ if (statusEffect) {
     label.textContent = name;
 }
 
-    potionInterval = setInterval(() => {
+    potionInterval = setInterval(() => {}, 9999999); // dummy, kept so clearInterval on re-use still works
+
+    let _potionRafId = null;
+    function _potionRafLoop() {
         const remaining = potionEndTime - Date.now();
         const percent = Math.max(0, (remaining / duration) * 100);
-
         shopBar.style.width = percent + "%";
         gameBar.style.width = percent + "%";
-
-        if (remaining <= 0) {
-            clearInterval(potionInterval);
+        if (remaining > 0) {
+            _potionRafId = requestAnimationFrame(_potionRafLoop);
         }
-    }, 250);
+    }
+    if (window._activePotionRafId) cancelAnimationFrame(window._activePotionRafId);
+    _potionRafId = requestAnimationFrame(_potionRafLoop);
+    window._activePotionRafId = _potionRafId;
 
     potionTimeout = setTimeout(() => {
         potionMultiplier = 1;
