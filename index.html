@@ -769,32 +769,32 @@
 
                 <div class="btn-upgrade" id="buy-mortal">
                     👤 Mortal Blood<br>
-                    <span class="desc">Grants <span style="color:#D8BFAA;">"Mortality"</span> and 20M× Luck for 2m (Cost: 1Oc)</span>
+                    <span class="desc">Grants <span style="color:#D8BFAA;">"Mortality"</span> and 100M× Luck for 2m (Cost: 1Oc)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-grief">
                     🖤 Elixir of the Grieved<br>
-                    <span class="desc">Grants <span style="color:#A29FA5;">"Grief"</span> and 500M× Luck for 4m (Cost: 10Oc)</span>
+                    <span class="desc">Grants <span style="color:#A29FA5;">"Grief"</span> and 1B× Luck for 4m (Cost: 10Oc)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-growth">
                     🧠 Tonic for the Mind<br>
-                    <span class="desc">Grants <span style="color:#4CAF50;">"Growth Mindset"</span> and 5B× Luck for 3m (Cost: 200Oc)</span>
+                    <span class="desc">Grants <span style="color:#4CAF50;">"Growth Mindset"</span> and 10B× Luck for 3m (Cost: 200Oc)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-question">
                     🌀 Interrogation Serum<br>
-                    <span class="desc">Grants <span style="color:#5D4EFA;">"The Question"</span> and 50B× Luck for 2m (Cost: 1No)</span>
+                    <span class="desc">Grants <span style="color:#5D4EFA;">"The Question"</span> and 1T× Luck for 2m (Cost: 1No)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-unknown">
                     ❓ Liquid of ???<br>
-                    <span class="desc">Grants <span style="color:#ffffff;">"???"</span> and 1T× Luck for 4m (Cost: 100No)</span>
+                    <span class="desc">Grants <span style="color:#ffffff;">"???"</span> and 10T× Luck for 4m (Cost: 100No)</span>
                 </div>
 
                 <div class="btn-upgrade" id="buy-he-knows" style="display:none; border: 1px solid #aab4ff55; box-shadow: 0 0 18px #aab4ff33;">
                     👁️ <span style="color:#e8eaff; font-weight:900;">He Knows</span><br>
-                    <span class="desc">Grants <span style="color:#e8eaff; text-shadow:0 0 8px #aab4ff;">"to know"</span> and 10T× Luck for 5m (Cost: 1UnD)</span>
+                    <span class="desc">Grants <span style="color:#e8eaff; text-shadow:0 0 8px #aab4ff;">"to know"</span> and 100T× Luck for 5m (Cost: 1UnD)</span>
                 </div>
             </div>
 
@@ -2415,7 +2415,7 @@ function buyPotion(type) {
 //checkpoint
     if (type === 14) {
         cost = 1e27;
-        multiplier = 20000000;
+        multiplier = 100000000;
         duration = 120000;
         name = "Mortal Blood";
         statusEffect = "mortality";
@@ -2423,7 +2423,7 @@ function buyPotion(type) {
 
     if (type === 15) {
         cost = 1e28;
-        multiplier = 500000000;
+        multiplier = 1000000000;
         duration = 240000;
         name = "Elixir of the Grieved";
         statusEffect = "grief";
@@ -2431,7 +2431,7 @@ function buyPotion(type) {
 
     if (type === 16) {
         cost = 2e29;
-        multiplier = 5000000000;
+        multiplier = 10000000000;
         duration = 180000;
         name = "Tonic for the Mind";
         statusEffect = "growth mindset";
@@ -2439,7 +2439,7 @@ function buyPotion(type) {
 
     if (type === 17) {
         cost = 1e30;
-        multiplier = 50000000000;
+        multiplier = 100000000000;
         duration = 120000;
         name = "Interrogation Serum";
         statusEffect = "the question";
@@ -2447,7 +2447,7 @@ function buyPotion(type) {
 
     if (type === 18) {
         cost = 1e32;
-        multiplier = 1000000000000;
+        multiplier = 10000000000000;
         duration = 240000;
         name = "Liquid of ???";
         statusEffect = "???";
@@ -2456,7 +2456,7 @@ function buyPotion(type) {
     if (type === 19) {
         if (!state.heKnowsUnlocked) return;
         cost = 1e36;
-        multiplier = 1e12;
+        multiplier = 1e13;
         duration = 300000;
         name = "He Knows";
         statusEffect = "to know";
