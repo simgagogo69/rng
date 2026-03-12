@@ -2876,7 +2876,7 @@ scheduleNextGlobalAnnounce();
         document.getElementById('btn-upgrade').addEventListener('click', () => {
             const cost = getUpgradeCost();
             if (state.points >= cost) {
-                state.points -= cost; state.luck += (1 + state.luckLevel * 0.25) * (state.prestigeLuck / 2 || 1); state.luckLevel += 1; saveData(); updateUI();
+                state.points -= cost; state.luck += (1 + state.luckLevel * 0.25); state.luckLevel += 1; saveData(); updateUI();
                 const btn = document.getElementById('btn-upgrade');
                 btn.textContent = "UPGRADED!"; btn.style.background = "var(--accent)";
                 setTimeout(() => { btn.style.background = ""; updateUI(); }, 500);
